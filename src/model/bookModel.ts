@@ -6,7 +6,7 @@ const bookSchema = new mongoose.Schema({
     ref: 'user',
     required: true,
   },
-  imageUrl: { type: String, required: true },
+  imageUrl: { type: String, required: false },
   title: { type: String, required: true },
   author: { type: String, required: true },
   price: { type: Number, required: true },
@@ -17,6 +17,10 @@ const bookSchema = new mongoose.Schema({
     required: true,
   },
   description: { type: String },
+  likes: {
+    type: [mongoose.Schema.Types.ObjectId],
+    default: [],
+  },
   date: { type: Date, required: true },
 });
 

@@ -6,7 +6,7 @@ export const bookRouter = express.Router();
 
 bookRouter.get('/', booksController.getAll.bind(booksController));
 
-bookRouter.get('/:id', booksController.getById.bind(booksController));
+bookRouter.get('/:id', authMiddleware, booksController.getById.bind(booksController));
 
 bookRouter.post(
   '/',
