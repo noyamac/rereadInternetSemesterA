@@ -1,0 +1,14 @@
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+
+$light-blue: #87B6BC;
+$light-green: #59AC77;
+
+$custom-colors: (
+  "light-blue": $light-blue,
+  "light-green": $light-green
+);
+
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
+@import "bootstrap/scss/bootstrap";
