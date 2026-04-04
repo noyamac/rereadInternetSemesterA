@@ -48,7 +48,7 @@ const Home: React.FC = () => {
       await booksApi.likeBook(bookId);
       setBooks(prevBooks =>
         prevBooks.map(book =>
-          book.id === bookId
+          book._id === bookId
             ? { ...book, isLiked: !book.isLiked, likes: book.isLiked ? book.likes - 1 : book.likes + 1 }
             : book
         )
@@ -82,7 +82,7 @@ const Home: React.FC = () => {
 
         <Row xs={1} md={2} lg={4} className="g-4">
           {filteredBooks.map((book) => (
-            <Col key={book.id}>
+            <Col key={book._id}>
               <Book book={book} onLike={likeBook} />
             </Col>
           ))}
