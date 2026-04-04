@@ -7,12 +7,15 @@ const api = axios.create({
 
 export const booksApi = {
   books: (page: number = 1, limit: number = 10) =>
-    api
-      .get(`/book?page=${page}&limit=${limit}`)
-      .then((r) => r.data),
+    api.get(`/book?page=${page}&limit=${limit}`).then((r) => r.data),
 
   likeBook: (bookId: string) =>
+    api.post(`/book/${bookId}/like`).then((r) => r.data),
+
+  getUserBooks: (sellerId: string, token: string) =>
     api
-      .post(`/book/${bookId}/like`)
+      .get(`/book/${sellerId}/userBooks`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then((r) => r.data),
 };

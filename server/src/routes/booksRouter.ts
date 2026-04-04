@@ -29,3 +29,9 @@ bookRouter.put(
   authMiddleware,
   booksController.update.bind(booksController),
 );
+
+bookRouter.get(
+  '/:sellerId/userBooks',
+  authMiddleware,
+  booksController.getbookByUserId.bind(booksController),
+);

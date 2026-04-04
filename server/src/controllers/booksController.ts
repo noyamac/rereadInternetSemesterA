@@ -1,7 +1,8 @@
 import { Response } from 'express';
+import mongoose from 'mongoose';
 import { book, BookDocument } from '../model/bookModel';
-import baseController from './baseController';
 import { AuthRequest } from '../utils/types/auth';
+import baseController from './baseController';
 
 class BooksController extends baseController<BookDocument> {
   constructor() {
@@ -32,6 +33,27 @@ class BooksController extends baseController<BookDocument> {
       return;
     }
     return super.delete(req, res);
+  }
+
+  async getbookByUserId(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.params.sellerId;
+
+      if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(400).json({ message: 'Invalid or missing User ID' });
+      }
+
+      const userIdMongo: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(
+        userId,
+      );
+      const userBooks = await book.find({ sellerId: userIdMongo });
+      res.json(userBooks);
+    } catch (error) {
+      res.status(500).json({
+        error:
+          error instanceof Error ? error.message : 'An unknown error occurred',
+      });
+    }
   }
 }
 

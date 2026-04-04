@@ -1,5 +1,5 @@
+import { Badge, Button, Card } from 'react-bootstrap';
 import type { BookPost } from '../../types/book.model';
-import { Card, Button, Badge } from 'react-bootstrap';
 import './book.css';
 
 interface BookProps {
@@ -36,9 +36,9 @@ const Book: React.FC<BookProps> = ({ book, onLike }) => {
         <div className="mt-auto">
           <div className="d-flex justify-content-between align-items-center mb-2">
             <Button
-              variant={book.isLiked ? "danger" : "outline-danger"}
+              variant={book.isLiked ? 'danger' : 'outline-danger'}
               size="sm"
-              onClick={() => onLike?.(book.id)}
+              onClick={() => onLike?.(book._id)}
             >
               ❤️ {book.likes}
             </Button>
