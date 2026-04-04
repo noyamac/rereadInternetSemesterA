@@ -1,8 +1,8 @@
-import { Response } from "express";
-import { comment, CommentDocument } from "../model/commentModel";
-import { book } from "../model/bookModel";
-import baseController from "./baseController";
-import { AuthRequest } from "../utils/types/auth";
+import { Response } from 'express';
+import { comment, CommentDocument } from '../model/commentModel';
+import { book } from '../model/bookModel';
+import baseController from './baseController';
+import { AuthRequest } from '../utils/types/auth';
 
 class CommentsController extends baseController<CommentDocument> {
   constructor() {
@@ -14,18 +14,18 @@ class CommentsController extends baseController<CommentDocument> {
     const { bookId, content } = req.body;
 
     if (!userId) {
-      res.status(401).json({ error: "Unauthorized" });
+      res.status(401).json({ error: 'Unauthorized' });
       return;
     }
 
     if (!bookId || !content) {
-      res.status(400).json({ error: "Missing bookId or content" });
+      res.status(400).json({ error: 'Missing bookId or content' });
       return;
     }
 
     const foundBook = await book.findById(bookId);
     if (!foundBook) {
-      res.status(404).json({ error: "Book not found" });
+      res.status(404).json({ error: 'Book not found' });
       return;
     }
 
@@ -43,7 +43,7 @@ class CommentsController extends baseController<CommentDocument> {
     const userId = req.user?._id;
     const currComment = await comment.findById(req.params.id);
     if (currComment?.userId.toString() !== userId) {
-      res.status(403).json({ error: "Forbidden" });
+      res.status(403).json({ error: 'Forbidden' });
       return;
     }
     req.body = { content: req.body.content };
@@ -54,12 +54,12 @@ class CommentsController extends baseController<CommentDocument> {
     const userId = req.user?._id;
     const currComment = await comment.findById(req.params.id);
     if (!currComment) {
-      res.status(404).json({ error: "Comment not found" });
+      res.status(404).json({ error: 'Comment not found' });
       return;
     }
 
     if (currComment.userId.toString() !== userId) {
-      res.status(403).json({ error: "Forbidden" });
+      res.status(403).json({ error: 'Forbidden' });
       return;
     }
 

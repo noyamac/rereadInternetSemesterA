@@ -1,7 +1,7 @@
-import { Response } from "express";
-import { AuthRequest } from "../utils/types/auth";
-import { user, UserDocument } from "../model/userModel";
-import baseController from "./baseController";
+import { Response } from 'express';
+import { AuthRequest } from '../utils/types/auth';
+import { user, UserDocument } from '../model/userModel';
+import baseController from './baseController';
 
 class UsersController extends baseController<UserDocument> {
   constructor() {
@@ -12,7 +12,7 @@ class UsersController extends baseController<UserDocument> {
     const userId = req.user?._id;
     const currUser = await user.findById(req.params.id);
     if (currUser?._id.toString() !== userId) {
-      res.status(403).json({ error: "Forbidden" });
+      res.status(403).json({ error: 'Forbidden' });
       return;
     }
     return super.update(req, res);
@@ -22,7 +22,7 @@ class UsersController extends baseController<UserDocument> {
     const userId = req.user?._id;
     const currUser = await user.findById(req.params.id);
     if (currUser?._id.toString() !== userId) {
-      res.status(403).json({ error: "Forbidden" });
+      res.status(403).json({ error: 'Forbidden' });
       return;
     }
     return super.delete(req, res);

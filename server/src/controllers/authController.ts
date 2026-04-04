@@ -1,20 +1,20 @@
-import { Request, Response } from "express";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { Tokens } from "../utils/types/tokens";
-import { user } from "../model/userModel";
+import { Request, Response } from 'express';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { Tokens } from '../utils/types/tokens';
+import { user } from '../model/userModel';
 
 const generateToken = (userId: string): Tokens => {
-  const secret: string = process.env.JWT_SECRET || "secretkey";
+  const secret: string = process.env.JWT_SECRET || 'secretkey';
   const refreshTokenSecret: string =
-    process.env.JWT_REFRESH_TOKEN_SECRET || "secretkey";
+    process.env.JWT_REFRESH_TOKEN_SECRET || 'secretkey';
 
-  const exp: number = parseInt(process.env.JWT_EXPIRES_IN || "3600");
+  const exp: number = parseInt(process.env.JWT_EXPIRES_IN || '3600');
   const token: string = jwt.sign({ userId: userId }, secret, {
     expiresIn: exp,
   });
   const refreshexp: number = parseInt(
-    process.env.JWT_REFRESH_EXPIRES_IN || "86400",
+    process.env.JWT_REFRESH_EXPIRES_IN || '86400',
   );
 
   const refreshToken: string = jwt.sign(
@@ -34,7 +34,7 @@ const register = async (req: Request, res: Response) => {
   if (!username || !email || !password) {
     return res
       .status(400)
-      .json({ error: "Username, email and password are required" });
+      .json({ error: 'Username, email and password are required' });
   }
 
   try {
@@ -58,7 +58,7 @@ const register = async (req: Request, res: Response) => {
   } catch (err) {
     return res
       .status(400)
-      .json({ error: "Failed to register the user", details: err });
+      .json({ error: 'Failed to register the user', details: err });
   }
 };
 
@@ -66,18 +66,18 @@ const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({ error: "Email and password are required" });
+    return res.status(400).json({ error: 'Email and password are required' });
   }
 
   try {
     const currUser = await user.findOne({ email });
     if (!currUser) {
-      return res.status(400).json({ error: "Invalid email or password" });
+      return res.status(400).json({ error: 'Invalid email or password' });
     }
 
     const matchPassword = await bcrypt.compare(password, currUser.password);
     if (!matchPassword) {
-      return res.status(400).json({ error: "Invalid email or password" });
+      return res.status(400).json({ error: 'Invalid email or password' });
     }
 
     const tokens: Tokens = generateToken(currUser._id.toString());
@@ -88,19 +88,19 @@ const login = async (req: Request, res: Response) => {
 
     res.status(201).json({ tokens });
   } catch (err) {
-    return res.status(400).json({ error: "Failed to login", details: err });
+    return res.status(400).json({ error: 'Failed to login', details: err });
   }
 };
 
 const logout = async (req: Request, res: Response) => {
-  const authHeader = req.headers["authorization"];
-  const refreshToken = authHeader && authHeader.split(" ")[1];
+  const authHeader = req.headers['authorization'];
+  const refreshToken = authHeader && authHeader.split(' ')[1];
 
   if (!refreshToken) {
-    return res.status(400).json({ error: "Refresh token is required" });
+    return res.status(400).json({ error: 'Refresh token is required' });
   }
 
-  const secret: string = process.env.JWT_REFRESH_TOKEN_SECRET || "secretkey";
+  const secret: string = process.env.JWT_REFRESH_TOKEN_SECRET || 'secretkey';
 
   try {
     const decoded: any = jwt.verify(refreshToken, secret);
@@ -108,20 +108,20 @@ const logout = async (req: Request, res: Response) => {
     const currUser = await user.findById(decoded.userId);
 
     if (!currUser) {
-      return res.status(400).json({ error: "Failed to logout" });
+      return res.status(400).json({ error: 'Failed to logout' });
     }
 
     if (!currUser.tokens.includes(refreshToken)) {
       currUser.tokens = [];
       await currUser.save();
-      return res.status(400).json({ error: "Failed to logout" });
+      return res.status(400).json({ error: 'Failed to logout' });
     }
 
     currUser.tokens = currUser.tokens.filter((token) => token !== refreshToken);
     await currUser.save();
     return res.status(200).send();
   } catch (err) {
-    return res.status(400).json({ error: "Failed to logout", details: err });
+    return res.status(400).json({ error: 'Failed to logout', details: err });
   }
 };
 
@@ -129,23 +129,23 @@ const refreshToken = async (req: Request, res: Response) => {
   const { refreshToken } = req.body;
 
   if (!refreshToken) {
-    return res.status(401).json({ error: "Refresh token is required" });
+    return res.status(401).json({ error: 'Refresh token is required' });
   }
 
   try {
-    const secret: string = process.env.JWT_REFRESH_TOKEN_SECRET || "secretkey";
+    const secret: string = process.env.JWT_REFRESH_TOKEN_SECRET || 'secretkey';
     const decoded: any = jwt.verify(refreshToken, secret);
 
     const currUser = await user.findById(decoded.userId);
     if (!currUser) {
-      return res.status(401).json({ error: "Invalid refresh token" });
+      return res.status(401).json({ error: 'Invalid refresh token' });
     }
 
     if (!currUser.tokens.includes(refreshToken)) {
       currUser.tokens = [];
       await currUser.save();
 
-      return res.status(401).json({ error: "Invalid refresh token" });
+      return res.status(401).json({ error: 'Invalid refresh token' });
     }
 
     const tokens = generateToken(currUser._id.toString());
@@ -157,7 +157,7 @@ const refreshToken = async (req: Request, res: Response) => {
   } catch (err) {
     return res
       .status(400)
-      .json({ error: "Failed to refresh token", details: err });
+      .json({ error: 'Failed to refresh token', details: err });
   }
 };
 
