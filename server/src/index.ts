@@ -4,6 +4,7 @@ import express, { Express } from 'express';
 import mongoose from 'mongoose';
 import { bookRouter } from './routes/booksRouter';
 import { authRouter } from './routes/authRouter';
+import { commentRouter } from './routes/commentRouter';
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use('/book', bookRouter);
+app.use('/comment', commentRouter);
 app.use('/auth', authRouter);
 
 export const initApp = (): Promise<Express> => {

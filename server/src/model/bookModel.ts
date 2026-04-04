@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const bookSchema = new mongoose.Schema({
   sellerId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
+    ref: 'User',
     required: true,
   },
   imageUrl: { type: String, required: false },
@@ -13,8 +13,8 @@ const bookSchema = new mongoose.Schema({
   summery: { type: String, required: true },
   comments: {
     type: [mongoose.Schema.Types.ObjectId],
-    ref: 'comment',
-    required: true,
+    ref: 'Comment',
+    default: [],
   },
   description: { type: String },
   likes: {

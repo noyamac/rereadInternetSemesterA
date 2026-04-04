@@ -1,0 +1,104 @@
+###
+GET http://localhost:8080/book
+
+###
+GET http://localhost:8080/book?sellerId=69b812d44b853f46dd6910e5
+
+###
+GET http://localhost:8080/book/69b813b5bd32ffb6e1c07b6c
+
+###
+POST http://localhost:8080/book
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWQxMTkyZjU0YWMwMjQzZTMyYWY3YmQiLCJpYXQiOjE3NzUzMTExNzAsImV4cCI6MTc3NTMxNDc3MH0.wh152B2eNVpl2W7WohLjlEP5oRkev3I9SXzJWYXnZ1o
+Content-Type: application/json
+
+{
+    "sellerId": "69b812d44b853f46dd6910e5",
+    "imageUrl": "image3.jpg",
+    "title": "Harry Potter and the Sorcerer's Stone",
+    "author":"J.K. Rowling",
+    "price": "15.2",
+    "summery":"book 1 summery",
+    "description": "book 1 description",
+    "date": "2026-01-01T13:31:41.786Z"
+}
+
+###
+PUT http://localhost:8080/book/69d1197354ac0243e32af7c9
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWQxMTkyZjU0YWMwMjQzZTMyYWY3YmQiLCJpYXQiOjE3NzUzMTExNzAsImV4cCI6MTc3NTMxNDc3MH0.wh152B2eNVpl2W7WohLjlEP5oRkev3I9SXzJWYXnZ1o
+Content-Type: application/json
+
+{
+    "imageUrl": "newimage1.jpg",
+    "description": "new desc",
+    "date": "2026-01-01T13:31:41.786Z"
+}
+
+###
+DELETE  http://localhost:8080/book/69d1197354ac0243e32af7c9
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWQxMTkyZjU0YWMwMjQzZTMyYWY3YmQiLCJpYXQiOjE3NzUzMTExNzAsImV4cCI6MTc3NTMxNDc3MH0.wh152B2eNVpl2W7WohLjlEP5oRkev3I9SXzJWYXnZ1o
+
+###
+GET http://localhost:8080/comment
+
+###
+GET http://localhost:8080/comment?userId=69d1192f54ac0243e32af7bd
+
+###
+GET http://localhost:8080/comment/69d11aa354ac0243e32af7d0
+
+###
+POST http://localhost:8080/comment
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWQxMTkyZjU0YWMwMjQzZTMyYWY3YmQiLCJpYXQiOjE3NzUzMTExNzAsImV4cCI6MTc3NTMxNDc3MH0.wh152B2eNVpl2W7WohLjlEP5oRkev3I9SXzJWYXnZ1o
+Content-Type: application/json
+
+{
+    "bookId": "69d1197254ac0243e32af7c7",
+    "content": "Great book!!"
+}
+
+###
+PUT http://localhost:8080/comment/69d11aa354ac0243e32af7d0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWQxMTkyZjU0YWMwMjQzZTMyYWY3YmQiLCJpYXQiOjE3NzUzMTExNzAsImV4cCI6MTc3NTMxNDc3MH0.wh152B2eNVpl2W7WohLjlEP5oRkev3I9SXzJWYXnZ1o
+Content-Type: application/json
+
+{
+    "content": "Amazing book!"
+}
+
+###
+DELETE  http://localhost:8080/comment/69d1197354ac0243e32af7c9
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWQxMTkyZjU0YWMwMjQzZTMyYWY3YmQiLCJpYXQiOjE3NzUzMTExNzAsImV4cCI6MTc3NTMxNDc3MH0.wh152B2eNVpl2W7WohLjlEP5oRkev3I9SXzJWYXnZ1o
+
+###
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+    "username": "ee",
+    "email": "emaa@gmail.com",
+    "password": "12344"
+}
+
+###
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+    "email": "emaa@gmail.com",
+    "password": "12344"
+}
+
+###
+POST http://localhost:8080/auth/refresh-token
+Content-Type: application/json
+
+{
+    "refreshToken": 
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWI4MTJkNDRiODUzZjQ2ZGQ2OTEwZTUiLCJpYXQiOjE3NzUxMzQ2MDksImV4cCI6MTc3NTIyMTAwOX0.V2eQLedtT5pwg8sQb7PdDWDjfb70-Y0_ng3iemamkhI"
+}
+
+###
+POST http://localhost:8080/auth/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTdhNTQ4YjU1NGMyODI4NTUyMDFkNjciLCJpYXQiOjE3Njk2MzA2OTAsImV4cCI6MTc2OTcxNzA5MH0.xx8jaslLMRUostRbrU48CITe18u5Exp8Zy9NRVe3vhw
+Content-Type: application/json
