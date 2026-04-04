@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { Model, Document } from "mongoose";
+import { Request, Response } from 'express';
+import { Model, Document } from 'mongoose';
 
 class BaseController<T extends Document> {
   model: Model<T>;
@@ -20,7 +20,7 @@ class BaseController<T extends Document> {
         res.json(data);
       }
     } catch (err) {
-      res.status(500).send({ error: "error recieving data", err });
+      res.status(500).send({ error: 'error recieving data', err });
     }
   }
 
@@ -29,14 +29,14 @@ class BaseController<T extends Document> {
     try {
       const data = await this.model.findById(id);
       if (!data) {
-        res.status(404).send("Data not found");
+        res.status(404).send('Data not found');
       } else {
         res.json(data);
       }
     } catch (error) {
       res.status(500).json({
         error:
-          error instanceof Error ? error.message : "An unknown error occurred",
+          error instanceof Error ? error.message : 'An unknown error occurred',
       });
     }
   }
@@ -48,7 +48,7 @@ class BaseController<T extends Document> {
       const response = await this.model.create(newData);
       res.status(201).json(response);
     } catch (err) {
-      res.status(500).send({ error: "error creating data", err });
+      res.status(500).send({ error: 'error creating data', err });
     }
   }
 
@@ -60,7 +60,7 @@ class BaseController<T extends Document> {
     } catch (error) {
       res.status(500).json({
         error:
-          error instanceof Error ? error.message : "An unknown error occurred",
+          error instanceof Error ? error.message : 'An unknown error occurred',
       });
     }
   }
@@ -76,7 +76,7 @@ class BaseController<T extends Document> {
     } catch (error) {
       res.status(500).json({
         error:
-          error instanceof Error ? error.message : "An unknown error occurred",
+          error instanceof Error ? error.message : 'An unknown error occurred',
       });
     }
   }
