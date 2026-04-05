@@ -5,6 +5,7 @@ import NavigationBar from './shared/components/navbar/navbar';
 
 const HomePage = lazy(() => import('./features/home/home'));
 const ProfilePage = lazy(() => import('./features/user/userProfile'));
+const CommentsPage = lazy(() => import('./features/comments/commentsPage'));
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/book/:bookId/comments" element={<CommentsPage />} />
           </Routes>
         </Suspense>
       </main>
