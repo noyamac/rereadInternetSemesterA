@@ -21,7 +21,7 @@ const Home: React.FC = () => {
       if (pageNum === 1) {
         setBooks(newBooks);
       } else {
-        setBooks(prev => [...prev, ...newBooks]);
+        setBooks((prev) => [...prev, ...newBooks]);
       }
     } catch (error) {
       console.error('Error loading books:', error);
@@ -34,7 +34,6 @@ const Home: React.FC = () => {
     loadBooks(1);
   }, []);
 
-  
   const loadMore = () => {
     if (loading || !hasMore) return;
 
@@ -46,12 +45,17 @@ const Home: React.FC = () => {
   const likeBook = async (bookId: string) => {
     try {
       await booksApi.likeBook(bookId);
-      setBooks(prevBooks =>
-        prevBooks.map(book =>
+
+      setBooks((prevBooks) =>
+        prevBooks.map((book) =>
           book._id === bookId
-            ? { ...book, isLiked: !book.isLiked, likes: book.isLiked ? book.likes - 1 : book.likes + 1 }
-            : book
-        )
+            ? {
+                ...book,
+                isLiked: !book.isLiked,
+                likes: book.isLiked ? book.likes - 1 : book.likes + 1,
+              }
+            : book,
+        ),
       );
     } catch (error) {
       console.error('Error liking book:', error);
@@ -91,11 +95,7 @@ const Home: React.FC = () => {
         {hasMore && (
           <Row className="justify-content-center mt-4">
             <Col xs="auto">
-              <Button
-                variant="primary"
-                onClick={loadMore}
-                disabled={loading}
-              >
+              <Button variant="primary" onClick={loadMore} disabled={loading}>
                 {loading ? 'Loading...' : 'Load More'}
               </Button>
             </Col>

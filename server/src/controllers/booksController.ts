@@ -25,6 +25,7 @@ class BooksController extends baseController<BookDocument> {
   async create(req: AuthRequest, res: Response) {
     const userId = req.user?._id;
     req.body.sellerId = userId;
+    req.body.date = new Date();
     return super.create(req, res);
   }
 
