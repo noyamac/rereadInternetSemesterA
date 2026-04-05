@@ -49,6 +49,27 @@ class BooksController extends baseController<BookDocument> {
     return super.delete(req, res);
   }
 
+  async getbookByUserId(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.params.sellerId;
+
+      if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(400).json({ message: 'Invalid or missing User ID' });
+      }
+
+      const userIdMongo: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(
+        userId,
+      );
+      const userBooks = await book.find({ sellerId: userIdMongo });
+      res.json(userBooks);
+    } catch (error) {
+      res.status(500).json({
+        error:
+          error instanceof Error ? error.message : 'An unknown error occurred',
+      });
+    }
+  }
+
   async likeBook(req: AuthRequest, res: Response) {
     const bookId = req.params.bookId;
     const userId = req.user?._id;

@@ -30,6 +30,12 @@ bookRouter.put(
   booksController.update.bind(booksController),
 );
 
+bookRouter.get(
+  '/:sellerId/userBooks',
+  authMiddleware,
+  booksController.getbookByUserId.bind(booksController),
+);
+
 bookRouter.post(
   '/:bookId/like',
   authMiddleware,

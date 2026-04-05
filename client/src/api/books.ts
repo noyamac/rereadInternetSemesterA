@@ -36,6 +36,13 @@ export const booksApi = {
         },
       )
       .then((r) => r.data),
+
+  getUserBooks: (sellerId: string, token: string) =>
+    api
+      .get(`/book/${sellerId}/userBooks`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((r) => parseBooks(r.data)),
 };
 
 //TODO: replace with real user ID from token

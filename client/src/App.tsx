@@ -5,6 +5,7 @@ import NavigationBar from './shared/components/navbar/navbar';
 import UploadBook from './shared/components/uploadBook/uploadBook';
 
 const HomePage = lazy(() => import('./features/home/home'));
+const ProfilePage = lazy(() => import('./features/user/userProfile'));
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/upload" element={<UploadBook />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Routes>
         </Suspense>
       </main>
