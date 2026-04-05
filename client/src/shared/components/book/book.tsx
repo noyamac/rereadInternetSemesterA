@@ -4,7 +4,7 @@ import './book.css';
 
 interface BookProps {
   book: BookPost;
-  onLike?: (bookId: string) => void;
+  onLike: (bookId: string) => void;
 }
 
 const Book: React.FC<BookProps> = ({ book, onLike }) => {
@@ -38,7 +38,7 @@ const Book: React.FC<BookProps> = ({ book, onLike }) => {
             <Button
               variant={book.isLiked ? "danger" : "outline-danger"}
               size="sm"
-              onClick={() => onLike?.(book.id)}
+              onClick={() => onLike(book._id)}
             >
               ❤️ {book.likes}
             </Button>
