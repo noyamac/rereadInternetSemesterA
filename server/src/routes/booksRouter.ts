@@ -35,3 +35,9 @@ bookRouter.get(
   authMiddleware,
   booksController.getbookByUserId.bind(booksController),
 );
+
+bookRouter.post(
+  '/:bookId/like',
+  authMiddleware,
+  booksController.likeBook.bind(booksController),
+);

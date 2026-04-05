@@ -26,7 +26,7 @@ const Profile: React.FC = () => {
       try {
         //todo: change mock user id to real one from token
         const token =
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWI4MTJkNDRiODUzZjQ2ZGQ2OTEwZTUiLCJpYXQiOjE3NzUzMTk2NDksImV4cCI6MTc3NTMyMzI0OX0.9y-Q3oy00k0bUWrbOAAUaYoqFLiTQr1FAE2Bmsl-fvE';
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWI4MTJkNDRiODUzZjQ2ZGQ2OTEwZTUiLCJpYXQiOjE3NzUzNzk3OTQsImV4cCI6MTc3NTM4MzM5NH0.h2Cs4oUS6_H7pwGmn7FKIw-LdmL5IBaoJJ8o4gZa2Mo';
         let userId = '69b812d44b853f46dd6910e5';
 
         if (token) {

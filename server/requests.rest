@@ -9,7 +9,7 @@ GET http://localhost:8080/book/69b813b5bd32ffb6e1c07b6c
 
 ###
 POST http://localhost:8080/book
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWQxMTkyZjU0YWMwMjQzZTMyYWY3YmQiLCJpYXQiOjE3NzUzMTExNzAsImV4cCI6MTc3NTMxNDc3MH0.wh152B2eNVpl2W7WohLjlEP5oRkev3I9SXzJWYXnZ1o
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWI4MTJkNDRiODUzZjQ2ZGQ2OTEwZTUiLCJpYXQiOjE3NzUzMTQwMjIsImV4cCI6MTc3NTMxNzYyMn0.OW5s1baADMpP7N2wXaAQx2bwulmeMb7o44tT87wUF20
 Content-Type: application/json
 
 {
