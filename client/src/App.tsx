@@ -4,6 +4,7 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import NavigationBar from './shared/components/navbar/navbar';
 
 const HomePage = lazy(() => import('./features/home/home'));
+const ProfilePage = lazy(() => import('./features/user/userProfile'));
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         >
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Routes>
         </Suspense>
       </main>

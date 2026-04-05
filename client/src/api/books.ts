@@ -19,11 +19,18 @@ export const booksApi = {
         {},
         {
           headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWI4MTJkNDRiODUzZjQ2ZGQ2OTEwZTUiLCJpYXQiOjE3NzUzMTQwMjIsImV4cCI6MTc3NTMxNzYyMn0.OW5s1baADMpP7N2wXaAQx2bwulmeMb7o44tT87wUF20`,
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWI4MTJkNDRiODUzZjQ2ZGQ2OTEwZTUiLCJpYXQiOjE3NzUzNzk3OTQsImV4cCI6MTc3NTM4MzM5NH0.h2Cs4oUS6_H7pwGmn7FKIw-LdmL5IBaoJJ8o4gZa2Mo`,
           },
         },
       )
       .then((r) => r.data),
+
+  getUserBooks: (sellerId: string, token: string) =>
+    api
+      .get(`/book/${sellerId}/userBooks`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((r) => parseBooks(r.data)),
 };
 
 //TODO: replace with real user ID from token

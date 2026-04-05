@@ -2,9 +2,10 @@ import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import express, { Express } from 'express';
 import mongoose from 'mongoose';
-import { bookRouter } from './routes/booksRouter';
 import { authRouter } from './routes/authRouter';
+import { bookRouter } from './routes/booksRouter';
 import { commentRouter } from './routes/commentRouter';
+import userRouter from './routes/userRouter';
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ app.use(bodyParser.json());
 app.use('/book', bookRouter);
 app.use('/comment', commentRouter);
 app.use('/auth', authRouter);
+app.use('/user', userRouter);
 
 export const initApp = (): Promise<Express> => {
   const promise = new Promise<Express>((resolve, reject) => {
