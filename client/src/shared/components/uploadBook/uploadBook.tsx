@@ -23,7 +23,7 @@ const UploadBook: React.FC = () => {
     author: '',
     price: '',
     description: '',
-    summery: '', // Matches your spelling from the Book card component
+    summery: '',
     imageUrl: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
