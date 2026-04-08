@@ -9,6 +9,17 @@ class CommentsController extends baseController<CommentDocument> {
     super(comment);
   }
 
+  async getAll(req: AuthRequest, res: Response) {
+    const filter = req.query;
+
+    try {
+      const data = await comment.find(filter).populate('userId', 'username');
+      res.json(data);
+    } catch (err) {
+      res.status(500).send({ error: 'error receiving data', err });
+    }
+  }
+
   async create(req: AuthRequest, res: Response) {
     const userId = req.user?._id;
     const { bookId, content } = req.body;
@@ -36,7 +47,8 @@ class CommentsController extends baseController<CommentDocument> {
     foundBook.comments.push(newComment._id);
     await foundBook.save();
 
-    res.status(201).json(newComment);
+    const populatedComment = await newComment.populate('userId', 'username');
+    res.status(201).json(populatedComment);
   }
 
   async update(req: AuthRequest, res: Response) {
