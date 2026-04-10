@@ -15,7 +15,11 @@ class BooksController extends baseController<BookDocument> {
     const skip = (page - 1) * limit;
 
     try {
-      const data = await this.model.find().skip(skip).limit(limit);
+      const data = await this.model
+        .find()
+        .populate('sellerId', 'username')
+        .skip(skip)
+        .limit(limit);
       res.json(data);
     } catch (err) {
       res.status(500).send({ error: 'error receiving data', err });
@@ -31,11 +35,34 @@ class BooksController extends baseController<BookDocument> {
   async update(req: AuthRequest, res: Response) {
     const userId = req.user?._id;
     const currBook = await book.findById(req.params.id);
-    if (currBook?.sellerId.toString() !== userId) {
+
+    if (!currBook) {
+      res.status(404).json({ error: 'Book not found' });
+      return;
+    }
+
+    if (currBook.sellerId.toString() !== userId) {
       res.status(403).json({ error: 'Forbidden' });
       return;
     }
-    return super.update(req, res);
+
+    try {
+      const updatedBook = await book
+        .findByIdAndUpdate(req.params.id, req.body, { new: true })
+        .populate('sellerId', 'username');
+
+      if (!updatedBook) {
+        res.status(404).json({ error: 'Book not found' });
+        return;
+      }
+
+      res.json(updatedBook);
+    } catch (error) {
+      res.status(500).json({
+        error:
+          error instanceof Error ? error.message : 'An unknown error occurred',
+      });
+    }
   }
 
   async delete(req: AuthRequest, res: Response) {
@@ -59,7 +86,9 @@ class BooksController extends baseController<BookDocument> {
       const userIdMongo: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(
         userId,
       );
-      const userBooks = await book.find({ sellerId: userIdMongo });
+      const userBooks = await book
+        .find({ sellerId: userIdMongo })
+        .populate('sellerId', 'username');
       res.json(userBooks);
     } catch (error) {
       res.status(500).json({
@@ -99,7 +128,8 @@ class BooksController extends baseController<BookDocument> {
       }
 
       await currBook.save();
-      res.json(currBook);
+      const populatedBook = await currBook.populate('sellerId', 'username');
+      res.json(populatedBook);
     } catch (err) {
       res.status(500).json({ error: 'Error liking book', err });
     }

@@ -1,19 +1,60 @@
 import { useNavigate } from 'react-router-dom';
-import { Badge, Button, Card } from 'react-bootstrap';
+import { Badge, Button, Card, Dropdown } from 'react-bootstrap';
 import type { BookPost } from '../../types/book.model';
 import './book.css';
 
 interface BookProps {
   book: BookPost;
   onLike: (bookId: string) => void;
+  onRemove?: (bookId: string) => void;
+  onEdit?: (book: BookPost) => void;
+  isRemoving?: boolean;
 }
 
-const Book: React.FC<BookProps> = ({ book, onLike }) => {
+const Book: React.FC<BookProps> = ({
+  book,
+  onLike,
+  onRemove,
+  onEdit,
+  isRemoving = false,
+}) => {
   const navigate = useNavigate();
 
   return (
     <Card className="h-100 shadow-sm border-2">
-      <Card.Header>{book.sellerId}</Card.Header>
+      <Card.Header className="d-flex justify-content-between align-items-center">
+        <span>{book.sellerUsername || book.sellerId}</span>
+        {(onRemove || onEdit) && (
+          <Dropdown align="end">
+            <Dropdown.Toggle
+              as={Button}
+              variant="link"
+              size="sm"
+              className="book-actions-toggle"
+              style={{ fontSize: '1.25rem' }}
+              disabled={isRemoving}
+            >
+              &#8942;
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              {onEdit && (
+                <Dropdown.Item onClick={() => onEdit(book)}>
+                  ✏️ Edit
+                </Dropdown.Item>
+              )}
+              {onRemove && (
+                <Dropdown.Item
+                  className="text-danger"
+                  onClick={() => onRemove(book._id)}
+                  disabled={isRemoving}
+                >
+                  {isRemoving ? 'Removing...' : '🗑️ Delete'}
+                </Dropdown.Item>
+              )}
+            </Dropdown.Menu>
+          </Dropdown>
+        )}
+      </Card.Header>
       <div className="book-img">
         <Card.Img
           variant="top"

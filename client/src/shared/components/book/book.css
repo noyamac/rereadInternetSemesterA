@@ -3,3 +3,33 @@
   width: 303px;
   overflow: hidden;
 }
+
+.book-actions-toggle {
+  color: #6c757d !important;
+  background: transparent !important;
+  border: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 30px !important;
+  height: 30px !important;
+  padding: 4px !important;
+  margin-right: -4px !important;
+  line-height: 1 !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+}
+
+.book-actions-toggle.dropdown-toggle::after {
+  display: none !important;
+}
+
+.book-actions-toggle:hover,
+.book-actions-toggle:focus,
+.book-actions-toggle:active {
+  color: #495057 !important;
+  background: transparent !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+}

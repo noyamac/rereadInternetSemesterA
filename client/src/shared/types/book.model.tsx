@@ -14,6 +14,7 @@ export interface BookPost {
   price: number;
   imageUrl: string;
   sellerId: string;
+  sellerUsername?: string;
   description: string;
   summery: string;
   comments: BookComment[];

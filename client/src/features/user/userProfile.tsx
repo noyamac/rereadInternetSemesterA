@@ -10,14 +10,28 @@ import {
 } from 'react-bootstrap';
 import { booksApi } from '../../api/books';
 import { userApi } from '../../api/user';
-import Book from '../../shared/components/book/book';
 import type { BookPost } from '../../shared/types/book.model';
 import type { UserProfile } from '../../shared/types/user.model';
+import ConfirmDeleteModal from './confirmDeleteModal';
+import EditBookModal, { type EditBookFields } from './editBookModal';
+import MyListingsSection from './myListingsSection';
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [userBooks, setUserBooks] = useState<BookPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [token, setToken] = useState('');
+  const [deletingBookId, setDeletingBookId] = useState<string | null>(null);
+  const [confirmingBookId, setConfirmingBookId] = useState<string | null>(null);
+  const [editingBook, setEditingBook] = useState<BookPost | null>(null);
+  const [editFields, setEditFields] = useState<EditBookFields>({
+    title: '',
+    author: '',
+    price: 0,
+    description: '',
+    summery: '',
+  });
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -26,7 +40,7 @@ const Profile: React.FC = () => {
       try {
         //todo: change mock user id to real one from token
         const token =
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWI4MTJkNDRiODUzZjQ2ZGQ2OTEwZTUiLCJpYXQiOjE3NzUzNzk3OTQsImV4cCI6MTc3NTM4MzM5NH0.h2Cs4oUS6_H7pwGmn7FKIw-LdmL5IBaoJJ8o4gZa2Mo';
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWQxMTkyZjU0YWMwMjQzZTMyYWY3YmQiLCJpYXQiOjE3NzU4Mzc4MTEsImV4cCI6MTc3NTg0MTQxMX0.klA_y6ORMRZ6lv8NdZqEh7X8mLk5FU99_dcMwIdSQXE';
         let userId = '69b812d44b853f46dd6910e5';
 
         if (token) {
@@ -44,6 +58,7 @@ const Profile: React.FC = () => {
           booksApi.getUserBooks(userId, token),
         ]);
 
+        setToken(token);
         setUser(userData);
         setUserBooks(booksData);
       } catch (error) {
@@ -55,6 +70,66 @@ const Profile: React.FC = () => {
 
     fetchProfileData();
   }, []);
+
+  const removeBook = (bookId: string) => {
+    if (!token || deletingBookId) return;
+    setConfirmingBookId(bookId);
+  };
+
+  const openEdit = (book: BookPost) => {
+    setEditingBook(book);
+    setEditFields({
+      title: book.title,
+      author: book.author,
+      price: book.price,
+      description: book.description,
+      summery: book.summery,
+    });
+  };
+
+  const handleEditFieldChange = (
+    field: keyof EditBookFields,
+    value: string | number,
+  ) => {
+    setEditFields((currentFields) => ({ ...currentFields, [field]: value }));
+  };
+
+  const saveEdit = async () => {
+    if (!editingBook || !token) return;
+    setIsSaving(true);
+    try {
+      const updatedBook = await booksApi.updateBook(editingBook._id, token, editFields);
+      setUserBooks((prevUserBooks) =>
+        prevUserBooks.map((currentBook) =>
+          currentBook._id === editingBook._id
+            ? { ...currentBook, ...updatedBook }
+            : currentBook,
+        ),
+      );
+      setEditingBook(null);
+    } catch (error) {
+      console.error('Error updating book:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const confirmRemove = async () => {
+    if (!confirmingBookId) return;
+    const bookId = confirmingBookId;
+    setConfirmingBookId(null);
+    setDeletingBookId(bookId);
+    try {
+      await booksApi.deleteBook(bookId, token);
+      setUserBooks((prevBooks) =>
+        prevBooks.filter((book) => book._id !== bookId),
+      );
+    } catch (error) {
+      console.error('Error deleting book:', error);
+    } finally {
+      setDeletingBookId(null);
+    }
+  };
 
   if (isLoading || !user) {
     return (
@@ -101,24 +176,31 @@ const Profile: React.FC = () => {
         </Card.Body>
       </Card>
 
-      <h4 className="fw-bold mb-4">My Listings</h4>
+      <ConfirmDeleteModal
+        show={!!confirmingBookId}
+        title="Remove Post"
+        message="Are you sure you want to remove this post?"
+        confirmLabel="Yes, Remove"
+        isProcessing={!!deletingBookId}
+        onClose={() => setConfirmingBookId(null)}
+        onConfirm={confirmRemove}
+      />
 
-      {userBooks.length > 0 ? (
-        <Row xs={1} md={2} lg={4} className="g-4">
-          {userBooks.map((book) => (
-            <Col key={book._id}>
-              <Book book={book} />
-            </Col>
-          ))}
-        </Row>
-      ) : (
-        <div className="text-center p-5 bg-white rounded-4 shadow-sm text-muted">
-          <h5>You haven't posted any books yet.</h5>
-          <Button variant="purple" className="mt-3 rounded-pill text-white">
-            Upload Your First Book
-          </Button>
-        </div>
-      )}
+      <EditBookModal
+        show={!!editingBook}
+        fields={editFields}
+        isSaving={isSaving}
+        onClose={() => setEditingBook(null)}
+        onSave={saveEdit}
+        onFieldChange={handleEditFieldChange}
+      />
+
+      <MyListingsSection
+        books={userBooks}
+        deletingBookId={deletingBookId}
+        onRemoveBook={removeBook}
+        onEditBook={openEdit}
+      />
     </Container>
   );
 };

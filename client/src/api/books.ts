@@ -6,8 +6,12 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-type ServerBook = Omit<BookPost, 'likes' | 'isLiked'> & {
+type ServerBook = Omit<
+  BookPost,
+  'likes' | 'isLiked' | 'sellerId' | 'sellerUsername'
+> & {
   likes?: string[];
+  sellerId: string | { _id: string; username?: string };
 };
 
 type ServerComment = Omit<BookComment, 'userId' | 'username'> & {
@@ -48,7 +52,7 @@ export const booksApi = {
         {},
         {
           headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWI4MTJkNDRiODUzZjQ2ZGQ2OTEwZTUiLCJpYXQiOjE3NzUzNzk3OTQsImV4cCI6MTc3NTM4MzM5NH0.h2Cs4oUS6_H7pwGmn7FKIw-LdmL5IBaoJJ8o4gZa2Mo`,
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWQxMTkyZjU0YWMwMjQzZTMyYWY3YmQiLCJpYXQiOjE3NzU4Mzc4MTEsImV4cCI6MTc3NTg0MTQxMX0.klA_y6ORMRZ6lv8NdZqEh7X8mLk5FU99_dcMwIdSQXE`,
           },
         },
       )
@@ -60,12 +64,34 @@ export const booksApi = {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((r) => parseBooks(r.data)),
+
+  deleteBook: (bookId: string, token: string) =>
+    api.delete(`/book/${bookId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    }),
+
+  updateBook: (
+    bookId: string,
+    token: string,
+    fields: Partial<
+      Pick<BookPost, 'title' | 'author' | 'price' | 'description' | 'summery'>
+    >,
+  ) =>
+    api
+      .put(`/book/${bookId}`, fields, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((r) => parseBooks([r.data as ServerBook])[0]),
 };
 
 //TODO: replace with real user ID from token
 const parseBooks = (data: ServerBook[]): BookPost[] => {
   return data.map((book) => ({
     ...book,
+    sellerId:
+      typeof book.sellerId === 'string' ? book.sellerId : book.sellerId._id,
+    sellerUsername:
+      typeof book.sellerId === 'string' ? undefined : book.sellerId.username,
     isLiked: book.likes?.includes('69b812d44b853f46dd6910e5') ?? false,
     likes: book.likes?.length || 0,
   }));
