@@ -14,7 +14,7 @@ import { booksApi } from '../../../api/books';
 import type { BookCreatePayload } from '../../types/book.model';
 
 const MOCK_UPLOAD_TOKEN =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWQxMTkyZjU0YWMwMjQzZTMyYWY3YmQiLCJpYXQiOjE3NzUzNzkxMDYsImV4cCI6MTc3NTM4MjcwNn0.z0Xi-8LPqhDRL0KIqwcGmrjUUci7vEUXwAG3LOpebeg';
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWQxMTkyZjU0YWMwMjQzZTMyYWY3YmQiLCJpYXQiOjE3NzU4NDY2ODEsImV4cCI6MTc3NTg1MDI4MX0.dfSsb_IihrD9v-XFPhY70NT_n3AewW2EmQM2QKQLseo';
 
 const UploadBook: React.FC = () => {
   const navigate = useNavigate();
@@ -79,6 +79,8 @@ const UploadBook: React.FC = () => {
             </Card.Header>
             <Card.Body className="p-4">
               <Form onSubmit={handleSubmit}>
+                <p className="text-muted small mb-3">* Required fields</p>
+
                 {errorMessage ? (
                   <div className="alert alert-danger" role="alert">
                     {errorMessage}
@@ -86,7 +88,7 @@ const UploadBook: React.FC = () => {
                 ) : null}
 
                 <Form.Group className="mb-3">
-                  <Form.Label className="fw-bold">Book Title</Form.Label>
+                  <Form.Label className="fw-bold">Book Title *</Form.Label>
                   <Form.Control
                     type="text"
                     name="title"
@@ -98,7 +100,7 @@ const UploadBook: React.FC = () => {
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                  <Form.Label className="fw-bold">Author</Form.Label>
+                  <Form.Label className="fw-bold">Author *</Form.Label>
                   <Form.Control
                     type="text"
                     name="author"
@@ -111,7 +113,7 @@ const UploadBook: React.FC = () => {
 
                 <Row className="mb-3">
                   <Col md={6}>
-                    <Form.Label className="fw-bold">Price</Form.Label>
+                    <Form.Label className="fw-bold">Price *</Form.Label>
                     <InputGroup>
                       <InputGroup.Text>$</InputGroup.Text>
                       <Form.Control
@@ -153,7 +155,7 @@ const UploadBook: React.FC = () => {
                 </Form.Group>
 
                 <Form.Group className="mb-4">
-                  <Form.Label className="fw-bold">Description</Form.Label>
+                  <Form.Label className="fw-bold">Description *</Form.Label>
                   <Form.Control
                     as="textarea"
                     name="description"

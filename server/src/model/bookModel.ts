@@ -6,11 +6,11 @@ const bookSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
-  imageUrl: { type: String, required: false },
+  imageUrl: { type: String },
   title: { type: String, required: true },
   author: { type: String, required: true },
   price: { type: Number, required: true },
-  summery: { type: String, required: false },
+  summery: { type: String },
   comments: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: 'Comment',

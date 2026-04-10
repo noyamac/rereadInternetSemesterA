@@ -47,13 +47,13 @@
 
 .btn-light-blue {
   background-color: #00a8e8;
-  color: white;
+  color: #ffffff;
   border: none;
 }
 
 .btn-light-blue:hover {
   background-color: #007ea7;
-  color: white;
+  color: #ffffff;
 }
 
 .badge.bg-light-green {
