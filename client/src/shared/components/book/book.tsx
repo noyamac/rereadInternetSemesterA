@@ -42,6 +42,7 @@ const Book: React.FC<BookProps> = ({
                   ✏️ Edit
                 </Dropdown.Item>
               )}
+              {onEdit && onRemove && <Dropdown.Divider />}
               {onRemove && (
                 <Dropdown.Item
                   className="text-danger"

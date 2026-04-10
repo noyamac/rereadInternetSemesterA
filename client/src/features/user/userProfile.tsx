@@ -98,7 +98,11 @@ const Profile: React.FC = () => {
     if (!editingBook || !token) return;
     setIsSaving(true);
     try {
-      const updatedBook = await booksApi.updateBook(editingBook._id, token, editFields);
+      const updatedBook = await booksApi.updateBook(
+        editingBook._id,
+        token,
+        editFields,
+      );
       setUserBooks((prevUserBooks) =>
         prevUserBooks.map((currentBook) =>
           currentBook._id === editingBook._id
