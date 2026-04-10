@@ -1,3 +1,12 @@
+export interface BookComment {
+  _id: string;
+  userId: string;
+  username?: string;
+  bookId: string;
+  content: string;
+  date: string;
+}
+
 export interface BookPost {
   _id: string;
   title: string;
@@ -7,7 +16,7 @@ export interface BookPost {
   sellerId: string;
   description: string;
   summery: string;
-  comments: Comment[];
+  comments: BookComment[];
   likes: number;
   isLiked: boolean;
 }

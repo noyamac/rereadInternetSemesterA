@@ -1,6 +1,6 @@
 import axios from 'axios';
-import type { BookPost } from '../shared/types/book.model';
 import type { BookCreatePayload } from '../shared/types/book.model';
+import type { BookComment, BookPost } from '../shared/types/book.model';
 
 const api = axios.create({
   baseURL: '/book',
@@ -9,6 +9,10 @@ const api = axios.create({
 
 type ServerBook = Omit<BookPost, 'likes' | 'isLiked'> & {
   likes?: string[];
+};
+
+type ServerComment = Omit<BookComment, 'userId' | 'username'> & {
+  userId: { _id: string; username?: string };
 };
 
 export const booksApi = {
@@ -23,6 +27,27 @@ export const booksApi = {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((r) => r.data),
+
+  commentsByBook: (bookId: string) =>
+    api
+      .get(`/comment?bookId=${bookId}`)
+      .then((r) =>
+        (r.data as ServerComment[]).map((comment) => normalizeComment(comment)),
+      ),
+
+  createComment: (bookId: string, content: string) =>
+    api
+      .post(
+        '/comment',
+        { bookId, content },
+        {
+          // TODO: Replace temporary token with authenticated user token
+          headers: {
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWQxMTkyZjU0YWMwMjQzZTMyYWY3YmQiLCJpYXQiOjE3NzU0MDU2NDcsImV4cCI6MTc3NTQwOTI0N30.ZSXR6AzghEjEx-xYVeLFmmybQOjTLdCCSr0saoN89Qc`,
+          },
+        },
+      )
+      .then((r) => normalizeComment(r.data as ServerComment)),
 
   likeBook: (bookId: string) =>
     api
@@ -53,3 +78,9 @@ const parseBooks = (data: ServerBook[]): BookPost[] => {
     likes: book.likes?.length || 0,
   }));
 };
+
+const normalizeComment = (comment: ServerComment): BookComment => ({
+  ...comment,
+  userId: comment.userId._id,
+  username: comment.userId.username,
+});

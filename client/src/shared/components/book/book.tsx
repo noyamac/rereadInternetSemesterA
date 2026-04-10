@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Badge, Button, Card } from 'react-bootstrap';
 import type { BookPost } from '../../types/book.model';
 import './book.css';
@@ -8,6 +9,8 @@ interface BookProps {
 }
 
 const Book: React.FC<BookProps> = ({ book, onLike }) => {
+  const navigate = useNavigate();
+
   return (
     <Card className="h-100 shadow-sm border-2">
       <Card.Header>{book.sellerId}</Card.Header>
@@ -42,9 +45,16 @@ const Book: React.FC<BookProps> = ({ book, onLike }) => {
             >
               ❤️ {book.likes}
             </Button>
+            <small className="text-muted">
+              Comments: {book.comments.length}
+            </small>
           </div>
-          <Button variant="light-blue" className="w-100">
-            Comments
+          <Button
+            variant="light-blue"
+            className="w-100"
+            onClick={() => navigate(`/book/${book._id}/comments`)}
+          >
+            View Comments
           </Button>
         </div>
       </Card.Body>
