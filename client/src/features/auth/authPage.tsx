@@ -9,6 +9,7 @@ import {
   Form,
   Row,
 } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import { authApi } from '../../api/auth';
 import { storeTokens } from '../../shared/utils/authToken';
 
@@ -27,6 +28,7 @@ const isDuplicateEmailError = (details: unknown): boolean => {
 };
 
 const AuthPage: React.FC = () => {
+  const navigate = useNavigate();
   const [mode, setMode] = useState<AuthMode>('login');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -83,7 +85,7 @@ const AuthPage: React.FC = () => {
       }
 
       window.dispatchEvent(new Event('auth-changed'));
-      window.location.assign('/');
+      navigate('/', { replace: true });
     } catch (error) {
       const axiosError = error as AxiosError<{
         error?: string;
