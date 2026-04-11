@@ -13,20 +13,10 @@ import { userApi } from '../../api/user';
 import Book from '../../shared/components/book/book';
 import type { BookPost } from '../../shared/types/book.model';
 import type { UserProfile } from '../../shared/types/user.model';
-
-const getStoredAccessToken = (): string | null =>
-  localStorage.getItem('access-token') || localStorage.getItem('token');
-
-const getUserIdFromToken = (token: string): string | null => {
-  try {
-    const payloadPart = token.split('.')[1];
-    if (!payloadPart) return null;
-    const payload = JSON.parse(atob(payloadPart));
-    return typeof payload.userId === 'string' ? payload.userId : null;
-  } catch {
-    return null;
-  }
-};
+import {
+  getStoredAccessToken,
+  getUserIdFromToken,
+} from '../../shared/utils/authToken';
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<UserProfile | null>(null);

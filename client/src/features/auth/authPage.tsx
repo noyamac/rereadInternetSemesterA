@@ -10,17 +10,13 @@ import {
   Row,
 } from 'react-bootstrap';
 import { authApi } from '../../api/auth';
+import { storeTokens } from '../../shared/utils/authToken';
 
 const MIN_PASSWORD_LENGTH = 6;
 
 type AuthMode = 'login' | 'register';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-const saveAuthTokens = (token: string, refreshToken: string) => {
-  localStorage.setItem('access-token', token);
-  localStorage.setItem('refresh-token', refreshToken);
-};
 
 const isDuplicateEmailError = (details: unknown): boolean => {
   const detailsText = JSON.stringify(details || {});
@@ -77,13 +73,13 @@ const AuthPage: React.FC = () => {
           email: email.trim(),
           password,
         });
-        saveAuthTokens(response.tokens.token, response.tokens.refreshToken);
+        storeTokens(response.tokens);
       } else {
         const response = await authApi.login({
           email: email.trim(),
           password,
         });
-        saveAuthTokens(response.tokens.token, response.tokens.refreshToken);
+        storeTokens(response.tokens);
       }
 
       window.dispatchEvent(new Event('auth-changed'));

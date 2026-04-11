@@ -5,6 +5,10 @@ import type {
   BookCreatePayload,
   BookPost,
 } from '../shared/types/book.model';
+import {
+  getStoredAccessToken,
+  getUserIdFromStoredAccessToken,
+} from '../shared/utils/authToken';
 
 const api = axios.create({
   baseURL: '/book',
@@ -17,7 +21,7 @@ const commentApi = axios.create({
 });
 
 const attachAuthToken = (config: InternalAxiosRequestConfig) => {
-  const token = localStorage.getItem('access-token');
+  const token = getStoredAccessToken();
   if (token) {
     config.headers = config.headers || {};
     config.headers.Authorization = `Bearer ${token}`;
@@ -35,20 +39,6 @@ type ServerBook = Omit<BookPost, 'likes' | 'isLiked' | 'sellerId'> & {
 
 type ServerComment = Omit<BookComment, 'userId' | 'username'> & {
   userId: { _id: string; username?: string };
-};
-
-const getUserIdFromToken = (): string | null => {
-  const token = localStorage.getItem('access-token');
-  if (!token) return null;
-
-  try {
-    const payloadPart = token.split('.')[1];
-    if (!payloadPart) return null;
-    const payload = JSON.parse(atob(payloadPart));
-    return typeof payload.userId === 'string' ? payload.userId : null;
-  } catch {
-    return null;
-  }
 };
 
 export const booksApi = {
@@ -78,7 +68,7 @@ export const booksApi = {
 };
 
 const parseBooks = (data: ServerBook[]): BookPost[] => {
-  const currentUserId = getUserIdFromToken();
+  const currentUserId = getUserIdFromStoredAccessToken();
 
   return data.map((book) => ({
     ...book,

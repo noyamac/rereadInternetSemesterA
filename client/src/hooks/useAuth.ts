@@ -1,49 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { AuthTokens } from '../api/auth';
 import { authApi } from '../api/auth';
+import type { AuthTokens } from '../shared/types/auth.model';
+import {
+  clearTokens,
+  getStoredAccessToken,
+  getStoredRefreshToken,
+  isTokenExpired,
+  storeTokens,
+} from '../shared/utils/authToken';
 
 export type AuthState = 'idle' | 'loggedIn';
-
-const ACCESS_TOKEN_KEY = 'access-token';
-const REFRESH_TOKEN_KEY = 'refresh-token';
-
-const decodeTokenPayload = (token: string): Record<string, unknown> | null => {
-  try {
-    const payload = token.split('.')[1];
-    if (!payload) return null;
-    return JSON.parse(atob(payload));
-  } catch {
-    return null;
-  }
-};
-
-const isTokenExpired = (token: string): boolean => {
-  const payload = decodeTokenPayload(token);
-  const exp = payload?.exp;
-
-  if (typeof exp !== 'number') {
-    return true;
-  }
-
-  const currentUnixTime = Math.floor(Date.now() / 1000);
-  return exp <= currentUnixTime;
-};
-
-const getStoredAccessToken = (): string | null =>
-  localStorage.getItem(ACCESS_TOKEN_KEY);
-
-const getStoredRefreshToken = (): string | null =>
-  localStorage.getItem(REFRESH_TOKEN_KEY);
-
-const storeTokens = (tokens: AuthTokens) => {
-  localStorage.setItem(ACCESS_TOKEN_KEY, tokens.token);
-  localStorage.setItem(REFRESH_TOKEN_KEY, tokens.refreshToken);
-};
-
-const clearTokens = () => {
-  localStorage.removeItem(ACCESS_TOKEN_KEY);
-  localStorage.removeItem(REFRESH_TOKEN_KEY);
-};
 
 export const useAuth = () => {
   const [authState, setAuthState] = useState<AuthState>('idle');

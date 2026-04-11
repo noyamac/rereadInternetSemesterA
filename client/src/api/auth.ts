@@ -1,32 +1,15 @@
 import axios from 'axios';
+import type {
+  AuthResponse,
+  LoginPayload,
+  RefreshTokenResponse,
+  RegisterPayload,
+} from '../shared/types/auth.model';
 
 const api = axios.create({
   baseURL: '/auth',
   headers: { 'Content-Type': 'application/json' },
 });
-
-export interface LoginPayload {
-  email: string;
-  password: string;
-}
-
-export interface RegisterPayload extends LoginPayload {
-  username: string;
-}
-
-export interface AuthTokens {
-  token: string;
-  refreshToken: string;
-}
-
-export interface AuthResponse {
-  tokens: AuthTokens;
-}
-
-export interface RefreshTokenResponse {
-  token: string;
-  refreshToken: string;
-}
 
 export const authApi = {
   login: (formData: LoginPayload) =>
