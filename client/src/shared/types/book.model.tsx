@@ -20,3 +20,13 @@ export interface BookPost {
   likes: number;
   isLiked: boolean;
 }
+
+export interface BookCreatePayload {
+  title: string;
+  author: string;
+  price: number;
+  imageUrl?: string;
+  description: string;
+  summery?: string;
+  date: string;
+}

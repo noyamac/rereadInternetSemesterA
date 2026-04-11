@@ -1,72 +1,92 @@
 import axios from 'axios';
-import type { BookComment, BookPost } from '../shared/types/book.model';
+import type { InternalAxiosRequestConfig } from 'axios';
+import type {
+  BookComment,
+  BookCreatePayload,
+  BookPost,
+} from '../shared/types/book.model';
 
 const api = axios.create({
-  baseURL: '/books',
+  baseURL: '/book',
   headers: { 'Content-Type': 'application/json' },
 });
 
-type ServerBook = Omit<BookPost, 'likes' | 'isLiked'> & {
+const commentApi = axios.create({
+  baseURL: '/comment',
+  headers: { 'Content-Type': 'application/json' },
+});
+
+const attachAuthToken = (config: InternalAxiosRequestConfig) => {
+  const token = localStorage.getItem('access-token');
+  if (token) {
+    config.headers = config.headers || {};
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+};
+
+api.interceptors.request.use(attachAuthToken);
+commentApi.interceptors.request.use(attachAuthToken);
+
+type ServerBook = Omit<BookPost, 'likes' | 'isLiked' | 'sellerId'> & {
   likes?: string[];
+  sellerId: string | { _id: string; username?: string };
 };
 
 type ServerComment = Omit<BookComment, 'userId' | 'username'> & {
   userId: { _id: string; username?: string };
 };
 
+const getUserIdFromToken = (): string | null => {
+  const token = localStorage.getItem('access-token');
+  if (!token) return null;
+
+  try {
+    const payloadPart = token.split('.')[1];
+    if (!payloadPart) return null;
+    const payload = JSON.parse(atob(payloadPart));
+    return typeof payload.userId === 'string' ? payload.userId : null;
+  } catch {
+    return null;
+  }
+};
+
 export const booksApi = {
   books: (page: number = 1, limit: number = 10) =>
-    api
-      .get(`/book?page=${page}&limit=${limit}`)
-      .then((r) => parseBooks(r.data)),
+    api.get(`/?page=${page}&limit=${limit}`).then((r) => parseBooks(r.data)),
+
+  createBook: (bookData: BookCreatePayload) =>
+    api.post('/', bookData).then((r) => r.data),
 
   commentsByBook: (bookId: string) =>
-    api
-      .get(`/comment?bookId=${bookId}`)
+    commentApi
+      .get(`/?bookId=${bookId}`)
       .then((r) =>
         (r.data as ServerComment[]).map((comment) => normalizeComment(comment)),
       ),
 
   createComment: (bookId: string, content: string) =>
-    api
-      .post(
-        '/comment',
-        { bookId, content },
-        {
-          // TODO: Replace temporary token with authenticated user token
-          headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWQxMTkyZjU0YWMwMjQzZTMyYWY3YmQiLCJpYXQiOjE3NzU0MDU2NDcsImV4cCI6MTc3NTQwOTI0N30.ZSXR6AzghEjEx-xYVeLFmmybQOjTLdCCSr0saoN89Qc`,
-          },
-        },
-      )
+    commentApi
+      .post('/', { bookId, content })
       .then((r) => normalizeComment(r.data as ServerComment)),
 
   likeBook: (bookId: string) =>
-    api
-      .post(
-        `/book/${bookId}/like`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWI4MTJkNDRiODUzZjQ2ZGQ2OTEwZTUiLCJpYXQiOjE3NzUzNzk3OTQsImV4cCI6MTc3NTM4MzM5NH0.h2Cs4oUS6_H7pwGmn7FKIw-LdmL5IBaoJJ8o4gZa2Mo`,
-          },
-        },
-      )
-      .then((r) => r.data),
+    api.post(`/${bookId}/like`, {}).then((r) => r.data),
 
-  getUserBooks: (sellerId: string, token: string) =>
-    api
-      .get(`/book/${sellerId}/userBooks`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((r) => parseBooks(r.data)),
+  getUserBooks: (sellerId: string) =>
+    api.get(`/${sellerId}/userBooks`).then((r) => parseBooks(r.data)),
 };
 
-//TODO: replace with real user ID from token
 const parseBooks = (data: ServerBook[]): BookPost[] => {
+  const currentUserId = getUserIdFromToken();
+
   return data.map((book) => ({
     ...book,
-    isLiked: book.likes?.includes('69b812d44b853f46dd6910e5') ?? false,
+    sellerId:
+      typeof book.sellerId === 'string' ? book.sellerId : book.sellerId._id,
+    isLiked: currentUserId
+      ? (book.likes?.includes(currentUserId) ?? false)
+      : false,
     likes: book.likes?.length || 0,
   }));
 };

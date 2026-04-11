@@ -14,40 +14,57 @@ import Book from '../../shared/components/book/book';
 import type { BookPost } from '../../shared/types/book.model';
 import type { UserProfile } from '../../shared/types/user.model';
 
+const getStoredAccessToken = (): string | null =>
+  localStorage.getItem('access-token') || localStorage.getItem('token');
+
+const getUserIdFromToken = (token: string): string | null => {
+  try {
+    const payloadPart = token.split('.')[1];
+    if (!payloadPart) return null;
+    const payload = JSON.parse(atob(payloadPart));
+    return typeof payload.userId === 'string' ? payload.userId : null;
+  } catch {
+    return null;
+  }
+};
+
 const Profile: React.FC = () => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [userBooks, setUserBooks] = useState<BookPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
     const fetchProfileData = async () => {
       setIsLoading(true);
 
       try {
-        //todo: change mock user id to real one from token
-        const token =
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWI4MTJkNDRiODUzZjQ2ZGQ2OTEwZTUiLCJpYXQiOjE3NzUzNzk3OTQsImV4cCI6MTc3NTM4MzM5NH0.h2Cs4oUS6_H7pwGmn7FKIw-LdmL5IBaoJJ8o4gZa2Mo';
-        let userId = '69b812d44b853f46dd6910e5';
+        setLoadError('');
 
-        if (token) {
-          try {
-            //todo: move to a function and decode with jwt library
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            userId = payload.userId;
-          } catch (error) {
-            console.error('Error decoding token:', error);
-          }
+        const token = getStoredAccessToken();
+        if (!token) {
+          setLoadError('You are not logged in. Please sign in again.');
+          setIsLoading(false);
+          return;
+        }
+
+        const userId = getUserIdFromToken(token);
+        if (!userId) {
+          setLoadError('Invalid login session. Please sign in again.');
+          setIsLoading(false);
+          return;
         }
 
         const [userData, booksData] = await Promise.all([
           userApi.getUser(userId),
-          booksApi.getUserBooks(userId, token),
+          booksApi.getUserBooks(userId),
         ]);
 
         setUser(userData);
         setUserBooks(booksData);
       } catch (error) {
         console.error('Error fetching profile data:', error);
+        setLoadError('Failed to load profile data.');
       } finally {
         setIsLoading(false);
       }
@@ -56,13 +73,23 @@ const Profile: React.FC = () => {
     fetchProfileData();
   }, []);
 
-  if (isLoading || !user) {
+  if (isLoading) {
     return (
       <Container
         className="d-flex justify-content-center align-items-center"
         style={{ minHeight: '60vh' }}
       >
         <Spinner animation="border" variant="purple" />
+      </Container>
+    );
+  }
+
+  if (!user) {
+    return (
+      <Container className="py-5">
+        <div className="text-center p-5 bg-white rounded-4 shadow-sm text-danger">
+          <h5>{loadError || 'Profile is unavailable right now.'}</h5>
+        </div>
       </Container>
     );
   }
@@ -107,12 +134,15 @@ const Profile: React.FC = () => {
         <Row xs={1} md={2} lg={4} className="g-4">
           {userBooks.map((book) => (
             <Col key={book._id}>
-              <Book book={book} />
+              <Book book={book} onLike={() => {}} />
             </Col>
           ))}
         </Row>
       ) : (
-        <div className="text-center p-5 bg-white rounded-4 shadow-sm text-muted">
+        <div
+          className="text-center p-5 bg-white rounded-4 shadow-sm text-muted"
+          style={{ marginTop: '100px' }}
+        >
           <h5>You haven't posted any books yet.</h5>
           <Button variant="purple" className="mt-3 rounded-pill text-white">
             Upload Your First Book
