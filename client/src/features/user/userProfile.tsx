@@ -26,7 +26,7 @@ const Profile: React.FC = () => {
       try {
         //todo: change mock user id to real one from token
         const token =
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWI4MTJkNDRiODUzZjQ2ZGQ2OTEwZTUiLCJpYXQiOjE3NzUzNzk3OTQsImV4cCI6MTc3NTM4MzM5NH0.h2Cs4oUS6_H7pwGmn7FKIw-LdmL5IBaoJJ8o4gZa2Mo';
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWQxMTkyZjU0YWMwMjQzZTMyYWY3YmQiLCJpYXQiOjE3NzU4NDY2ODEsImV4cCI6MTc3NTg1MDI4MX0.dfSsb_IihrD9v-XFPhY70NT_n3AewW2EmQM2QKQLseo';
         let userId = '69b812d44b853f46dd6910e5';
 
         if (token) {
@@ -107,7 +107,7 @@ const Profile: React.FC = () => {
         <Row xs={1} md={2} lg={4} className="g-4">
           {userBooks.map((book) => (
             <Col key={book._id}>
-              <Book book={book} />
+              <Book book={book} onLike={() => {}} />
             </Col>
           ))}
         </Row>

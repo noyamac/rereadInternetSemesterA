@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { Spinner } from 'react-bootstrap';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import NavigationBar from './shared/components/navbar/navbar';
+import UploadBook from './shared/components/uploadBook/uploadBook';
 
 const HomePage = lazy(() => import('./features/home/home'));
 const ProfilePage = lazy(() => import('./features/user/userProfile'));
@@ -22,6 +23,7 @@ function App() {
         >
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/upload" element={<UploadBook />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/book/:bookId/comments" element={<CommentsPage />} />
           </Routes>

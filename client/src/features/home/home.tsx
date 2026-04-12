@@ -45,6 +45,7 @@ const Home: React.FC = () => {
   const likeBook = async (bookId: string) => {
     try {
       await booksApi.likeBook(bookId);
+
       setBooks((prevBooks) =>
         prevBooks.map((book) =>
           book._id === bookId
