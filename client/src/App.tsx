@@ -13,6 +13,9 @@ const HomePage = lazy(() => import('./features/home/home'));
 const AuthPage = lazy(() => import('./features/auth/authPage'));
 const ProfilePage = lazy(() => import('./features/user/userProfile'));
 const CommentsPage = lazy(() => import('./features/comments/commentsPage'));
+const UploadPage = lazy(
+  () => import('./shared/components/uploadBook/uploadBook'),
+);
 
 function App() {
   const { authState, isLoading } = useAuth();
@@ -43,6 +46,7 @@ function App() {
             {isLoggedIn ? (
               <>
                 <Route path="/" element={<HomePage />} />
+                <Route path="/upload" element={<UploadPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route
                   path="/view/:bookId/comments"

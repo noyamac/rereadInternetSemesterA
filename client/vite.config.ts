@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/auth': {
+      '/book': {
         target: 'http://localhost:8080',
         changeOrigin: true,
       },
@@ -14,11 +14,11 @@ export default defineConfig({
         target: 'http://localhost:8080',
         changeOrigin: true,
       },
-      '/book': {
+      '/comment': {
         target: 'http://localhost:8080',
         changeOrigin: true,
       },
-      '/comment': {
+      '/auth': {
         target: 'http://localhost:8080',
         changeOrigin: true,
       },
