@@ -1,8 +1,8 @@
 import axios from 'axios';
 import type {
   AuthResponse,
+  AuthTokens,
   LoginPayload,
-  RefreshTokenResponse,
   RegisterPayload,
 } from '../shared/types/auth.model';
 
@@ -25,7 +25,7 @@ export const authApi = {
   refreshToken: (refreshToken: string) =>
     api
       .post('/refresh-token', { refreshToken })
-      .then((response) => response.data as RefreshTokenResponse),
+      .then((response) => response.data as AuthTokens),
 
   logout: (refreshToken: string) =>
     api.post('/logout', undefined, {

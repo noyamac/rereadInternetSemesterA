@@ -15,8 +15,3 @@ export interface AuthTokens {
 export interface AuthResponse {
   tokens: AuthTokens;
 }
-
-export interface RefreshTokenResponse {
-  token: string;
-  refreshToken: string;
-}

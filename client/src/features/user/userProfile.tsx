@@ -63,6 +63,26 @@ const Profile: React.FC = () => {
     fetchProfileData();
   }, []);
 
+  const likeBook = async (bookId: string) => {
+    try {
+      await booksApi.likeBook(bookId);
+
+      setUserBooks((prevBooks) =>
+        prevBooks.map((book) =>
+          book._id === bookId
+            ? {
+                ...book,
+                isLiked: !book.isLiked,
+                likes: book.isLiked ? book.likes - 1 : book.likes + 1,
+              }
+            : book,
+        ),
+      );
+    } catch (error) {
+      console.error('Error liking book:', error);
+    }
+  };
+
   if (isLoading) {
     return (
       <Container
@@ -124,7 +144,7 @@ const Profile: React.FC = () => {
         <Row xs={1} md={2} lg={4} className="g-4">
           {userBooks.map((book) => (
             <Col key={book._id}>
-              <Book book={book} onLike={() => {}} />
+              <Book book={book} onLike={likeBook} />
             </Col>
           ))}
         </Row>
