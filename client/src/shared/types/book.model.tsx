@@ -25,8 +25,8 @@ export interface BookCreatePayload {
   title: string;
   author: string;
   price: number;
+  imageUrl?: string;
   description: string;
   summery?: string;
-  imageUrl?: string;
   date: string;
 }

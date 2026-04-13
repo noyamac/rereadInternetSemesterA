@@ -52,7 +52,7 @@ const Book: React.FC<BookProps> = ({ book, onLike }) => {
           <Button
             variant="light-blue"
             className="w-100"
-            onClick={() => navigate(`/book/${book._id}/comments`)}
+            onClick={() => navigate(`/view/${book._id}/comments`)}
           >
             View Comments
           </Button>

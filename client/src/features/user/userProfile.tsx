@@ -13,41 +13,48 @@ import { userApi } from '../../api/user';
 import Book from '../../shared/components/book/book';
 import type { BookPost } from '../../shared/types/book.model';
 import type { UserProfile } from '../../shared/types/user.model';
+import {
+  getStoredAccessToken,
+  getUserIdFromToken,
+} from '../../shared/utils/authToken';
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [userBooks, setUserBooks] = useState<BookPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
     const fetchProfileData = async () => {
       setIsLoading(true);
 
       try {
-        //todo: change mock user id to real one from token
-        const token =
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWQxMTkyZjU0YWMwMjQzZTMyYWY3YmQiLCJpYXQiOjE3NzU4NDY2ODEsImV4cCI6MTc3NTg1MDI4MX0.dfSsb_IihrD9v-XFPhY70NT_n3AewW2EmQM2QKQLseo';
-        let userId = '69b812d44b853f46dd6910e5';
+        setLoadError('');
 
-        if (token) {
-          try {
-            //todo: move to a function and decode with jwt library
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            userId = payload.userId;
-          } catch (error) {
-            console.error('Error decoding token:', error);
-          }
+        const token = getStoredAccessToken();
+        if (!token) {
+          setLoadError('You are not logged in. Please sign in again.');
+          setIsLoading(false);
+          return;
+        }
+
+        const userId = getUserIdFromToken(token);
+        if (!userId) {
+          setLoadError('Invalid login session. Please sign in again.');
+          setIsLoading(false);
+          return;
         }
 
         const [userData, booksData] = await Promise.all([
           userApi.getUser(userId),
-          booksApi.getUserBooks(userId, token),
+          booksApi.getUserBooks(userId),
         ]);
 
         setUser(userData);
         setUserBooks(booksData);
       } catch (error) {
         console.error('Error fetching profile data:', error);
+        setLoadError('Failed to load profile data.');
       } finally {
         setIsLoading(false);
       }
@@ -56,13 +63,43 @@ const Profile: React.FC = () => {
     fetchProfileData();
   }, []);
 
-  if (isLoading || !user) {
+  const likeBook = async (bookId: string) => {
+    try {
+      await booksApi.likeBook(bookId);
+
+      setUserBooks((prevBooks) =>
+        prevBooks.map((book) =>
+          book._id === bookId
+            ? {
+                ...book,
+                isLiked: !book.isLiked,
+                likes: book.isLiked ? book.likes - 1 : book.likes + 1,
+              }
+            : book,
+        ),
+      );
+    } catch (error) {
+      console.error('Error liking book:', error);
+    }
+  };
+
+  if (isLoading) {
     return (
       <Container
         className="d-flex justify-content-center align-items-center"
         style={{ minHeight: '60vh' }}
       >
         <Spinner animation="border" variant="purple" />
+      </Container>
+    );
+  }
+
+  if (!user) {
+    return (
+      <Container className="py-5">
+        <div className="text-center p-5 bg-white rounded-4 shadow-sm text-danger">
+          <h5>{loadError || 'Profile is unavailable right now.'}</h5>
+        </div>
       </Container>
     );
   }
@@ -107,12 +144,15 @@ const Profile: React.FC = () => {
         <Row xs={1} md={2} lg={4} className="g-4">
           {userBooks.map((book) => (
             <Col key={book._id}>
-              <Book book={book} onLike={() => {}} />
+              <Book book={book} onLike={likeBook} />
             </Col>
           ))}
         </Row>
       ) : (
-        <div className="text-center p-5 bg-white rounded-4 shadow-sm text-muted">
+        <div
+          className="text-center p-5 bg-white rounded-4 shadow-sm text-muted"
+          style={{ marginTop: '100px' }}
+        >
           <h5>You haven't posted any books yet.</h5>
           <Button variant="purple" className="mt-3 rounded-pill text-white">
             Upload Your First Book

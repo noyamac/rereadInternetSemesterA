@@ -13,9 +13,6 @@ import { useNavigate } from 'react-router-dom';
 import { booksApi } from '../../../api/books';
 import type { BookCreatePayload } from '../../types/book.model';
 
-const MOCK_UPLOAD_TOKEN =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWQxMTkyZjU0YWMwMjQzZTMyYWY3YmQiLCJpYXQiOjE3NzU4NDY2ODEsImV4cCI6MTc3NTg1MDI4MX0.dfSsb_IihrD9v-XFPhY70NT_n3AewW2EmQM2QKQLseo';
-
 const UploadBook: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -53,8 +50,7 @@ const UploadBook: React.FC = () => {
     };
 
     try {
-      // TODO: Replace the temporary token with the real authenticated user token
-      await booksApi.createBook(payload, MOCK_UPLOAD_TOKEN);
+      await booksApi.createBook(payload);
       navigate('/');
     } catch (error) {
       const axiosError = error as AxiosError<{ error?: string }>;
