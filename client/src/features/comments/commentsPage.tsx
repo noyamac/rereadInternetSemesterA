@@ -10,7 +10,7 @@ import {
   Spinner,
 } from 'react-bootstrap';
 import { Link, useParams } from 'react-router-dom';
-import { booksApi } from '../../api/books';
+import { commentsApi } from '../../api/comment';
 import type { BookComment } from '../../shared/types/book.model';
 
 const CommentsPage: React.FC = () => {
@@ -32,7 +32,7 @@ const CommentsPage: React.FC = () => {
       setIsLoading(true);
       setErrorMessage('');
       try {
-        const data = await booksApi.commentsByBook(bookId);
+        const data = await commentsApi.commentsByBook(bookId);
         setComments(data);
       } catch (error) {
         console.error('Error loading comments:', error);
@@ -55,7 +55,7 @@ const CommentsPage: React.FC = () => {
     setErrorMessage('');
 
     try {
-      const created = await booksApi.createComment(bookId, content);
+      const created = await commentsApi.createComment(bookId, content);
       setComments((prev) => [...prev, created]);
       setNewComment('');
     } catch (error) {

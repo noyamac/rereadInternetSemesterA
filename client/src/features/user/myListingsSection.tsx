@@ -6,6 +6,7 @@ import type { BookPost } from '../../shared/types/book.model';
 interface MyListingsSectionProps {
   books: BookPost[];
   deletingBookId: string | null;
+  onLikeBook: (bookId: string) => void;
   onRemoveBook: (bookId: string) => void;
   onEditBook: (book: BookPost) => void;
 }
@@ -13,6 +14,7 @@ interface MyListingsSectionProps {
 const MyListingsSection: React.FC<MyListingsSectionProps> = ({
   books,
   deletingBookId,
+  onLikeBook,
   onRemoveBook,
   onEditBook,
 }) => {
@@ -26,7 +28,7 @@ const MyListingsSection: React.FC<MyListingsSectionProps> = ({
             <Col key={book._id} className="d-flex flex-column">
               <Book
                 book={book}
-                onLike={() => {}}
+                onLike={onLikeBook}
                 onRemove={onRemoveBook}
                 onEdit={onEditBook}
                 isRemoving={deletingBookId === book._id}

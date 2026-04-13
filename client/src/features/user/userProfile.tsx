@@ -15,12 +15,15 @@ import type { UserProfile } from '../../shared/types/user.model';
 import ConfirmDeleteModal from './confirmDeleteModal';
 import EditBookModal, { type EditBookFields } from './editBookModal';
 import MyListingsSection from './myListingsSection';
+import {
+  getStoredAccessToken,
+  getUserIdFromToken,
+} from '../../shared/utils/authToken';
 
 const Profile: React.FC = () => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [userBooks, setUserBooks] = useState<BookPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [token, setToken] = useState('');
   const [deletingBookId, setDeletingBookId] = useState<string | null>(null);
   const [confirmingBookId, setConfirmingBookId] = useState<string | null>(null);
   const [editingBook, setEditingBook] = useState<BookPost | null>(null);
@@ -32,37 +35,39 @@ const Profile: React.FC = () => {
     summery: '',
   });
   const [isSaving, setIsSaving] = useState(false);
+  const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
     const fetchProfileData = async () => {
       setIsLoading(true);
 
       try {
-        //todo: change mock user id to real one from token
-        const token =
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OWQxMTkyZjU0YWMwMjQzZTMyYWY3YmQiLCJpYXQiOjE3NzU4Mzc4MTEsImV4cCI6MTc3NTg0MTQxMX0.klA_y6ORMRZ6lv8NdZqEh7X8mLk5FU99_dcMwIdSQXE';
-        let userId = '69b812d44b853f46dd6910e5';
+        setLoadError('');
 
-        if (token) {
-          try {
-            //todo: move to a function and decode with jwt library
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            userId = payload.userId;
-          } catch (error) {
-            console.error('Error decoding token:', error);
-          }
+        const token = getStoredAccessToken();
+        if (!token) {
+          setLoadError('You are not logged in. Please sign in again.');
+          setIsLoading(false);
+          return;
+        }
+
+        const userId = getUserIdFromToken(token);
+        if (!userId) {
+          setLoadError('Invalid login session. Please sign in again.');
+          setIsLoading(false);
+          return;
         }
 
         const [userData, booksData] = await Promise.all([
           userApi.getUser(userId),
-          booksApi.getUserBooks(userId, token),
+          booksApi.getUserBooks(userId),
         ]);
 
-        setToken(token);
         setUser(userData);
         setUserBooks(booksData);
       } catch (error) {
         console.error('Error fetching profile data:', error);
+        setLoadError('Failed to load profile data.');
       } finally {
         setIsLoading(false);
       }
@@ -72,7 +77,7 @@ const Profile: React.FC = () => {
   }, []);
 
   const removeBook = (bookId: string) => {
-    if (!token || deletingBookId) return;
+    if (deletingBookId) return;
     setConfirmingBookId(bookId);
   };
 
@@ -95,12 +100,11 @@ const Profile: React.FC = () => {
   };
 
   const saveEdit = async () => {
-    if (!editingBook || !token) return;
+    if (!editingBook) return;
     setIsSaving(true);
     try {
       const updatedBook = await booksApi.updateBook(
         editingBook._id,
-        token,
         editFields,
       );
       setUserBooks((prevUserBooks) =>
@@ -124,7 +128,7 @@ const Profile: React.FC = () => {
     setConfirmingBookId(null);
     setDeletingBookId(bookId);
     try {
-      await booksApi.deleteBook(bookId, token);
+      await booksApi.deleteBook(bookId);
       setUserBooks((prevBooks) =>
         prevBooks.filter((book) => book._id !== bookId),
       );
@@ -135,13 +139,43 @@ const Profile: React.FC = () => {
     }
   };
 
-  if (isLoading || !user) {
+  const likeBook = async (bookId: string) => {
+    try {
+      await booksApi.likeBook(bookId);
+
+      setUserBooks((prevBooks) =>
+        prevBooks.map((book) =>
+          book._id === bookId
+            ? {
+                ...book,
+                isLiked: !book.isLiked,
+                likes: book.isLiked ? book.likes - 1 : book.likes + 1,
+              }
+            : book,
+        ),
+      );
+    } catch (error) {
+      console.error('Error liking book:', error);
+    }
+  };
+
+  if (isLoading) {
     return (
       <Container
         className="d-flex justify-content-center align-items-center"
         style={{ minHeight: '60vh' }}
       >
         <Spinner animation="border" variant="purple" />
+      </Container>
+    );
+  }
+
+  if (!user) {
+    return (
+      <Container className="py-5">
+        <div className="text-center p-5 bg-white rounded-4 shadow-sm text-danger">
+          <h5>{loadError || 'Profile is unavailable right now.'}</h5>
+        </div>
       </Container>
     );
   }
@@ -202,6 +236,7 @@ const Profile: React.FC = () => {
       <MyListingsSection
         books={userBooks}
         deletingBookId={deletingBookId}
+        onLikeBook={likeBook}
         onRemoveBook={removeBook}
         onEditBook={openEdit}
       />

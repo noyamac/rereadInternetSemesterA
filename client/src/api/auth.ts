@@ -1,44 +1,34 @@
 import axios from 'axios';
+import type {
+  AuthResponse,
+  AuthTokens,
+  LoginPayload,
+  RegisterPayload,
+} from '../shared/types/auth.model';
 
 const api = axios.create({
-  baseURL: '/userManagement',
+  baseURL: '/auth',
   headers: { 'Content-Type': 'application/json' },
 });
 
-export const userManagementApi = {
-  verify: (token: string | null) =>
+export const authApi = {
+  login: (formData: LoginPayload) =>
     api
-      .get(`/auth/verify`, { headers: { Authorization: `Bearer ${token}` } })
-      .then((r) => r.data),
+      .post('/login', formData)
+      .then((response) => response.data as AuthResponse),
 
-  signin: (formData: any) =>
-    api.post(`/auth/signin`, formData).then((r) => r.data),
-
-  signup: (formData: any) =>
-    api.post(`/auth/signup`, formData).then((r) => r.data),
-
-  getAccountData: (userId: string, token: string | null) =>
+  register: (formData: RegisterPayload) =>
     api
-      .get(`/userManagement/${userId}/account`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((r) => r.data),
+      .post('/register', formData)
+      .then((response) => response.data as AuthResponse),
 
-  getPreferences: (userId: string, token: string | null) =>
+  refreshToken: (refreshToken: string) =>
     api
-      .get(`/userManagement/${userId}/preferences`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((r) => r.data),
+      .post('/refresh-token', { refreshToken })
+      .then((response) => response.data as AuthTokens),
 
-  updatePreferences: (
-    userId: string,
-    preferences: OnboardingData,
-    token: string | null,
-  ) =>
-    api
-      .patch(`/userManagement/${userId}/preferences`, preferences, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((r) => r.data),
+  logout: (refreshToken: string) =>
+    api.post('/logout', undefined, {
+      headers: { Authorization: `Bearer ${refreshToken}` },
+    }),
 };
