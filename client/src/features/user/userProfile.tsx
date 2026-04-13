@@ -8,8 +8,10 @@ import {
   Row,
   Spinner,
 } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import { booksApi } from '../../api/books';
 import { userApi } from '../../api/user';
+import { useAuth } from '../../hooks/useAuth';
 import Book from '../../shared/components/book/book';
 import type { BookPost } from '../../shared/types/book.model';
 import type { UserProfile } from '../../shared/types/user.model';
@@ -19,10 +21,13 @@ import {
 } from '../../shared/utils/authToken';
 
 const Profile: React.FC = () => {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [userBooks, setUserBooks] = useState<BookPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -83,6 +88,17 @@ const Profile: React.FC = () => {
     }
   };
 
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+
+    try {
+      await logout();
+      navigate('/welcome', { replace: true });
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <Container
@@ -129,9 +145,25 @@ const Profile: React.FC = () => {
                 {userBooks.length} Active Listings
               </Badge>
             </Col>
-            <Col md={4} className="text-md-end mt-3 mt-md-0">
-              <Button variant="outline-primary" className="rounded-pill px-4">
+            <Col
+              md={4}
+              className="d-flex flex-column align-items-center align-items-md-end mt-3 mt-md-0 gap-3"
+            >
+              <Button
+                variant="outline-primary"
+                className="rounded-pill px-4"
+                style={{ minWidth: '150px' }}
+              >
                 Edit Profile
+              </Button>
+              <Button
+                variant="outline-danger"
+                className="rounded-pill px-4"
+                onClick={handleLogout}
+                disabled={isLoggingOut}
+                style={{ minWidth: '150px' }}
+              >
+                {isLoggingOut ? 'Logging out...' : 'Logout'}
               </Button>
             </Col>
           </Row>
