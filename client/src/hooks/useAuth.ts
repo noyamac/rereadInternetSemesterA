@@ -84,6 +84,7 @@ export const useAuth = () => {
     } finally {
       clearTokens();
       setAuthState('idle');
+      window.dispatchEvent(new Event('auth-changed'));
     }
   }, []);
 
