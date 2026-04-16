@@ -5,6 +5,8 @@ export const authRouter = express.Router();
 
 authRouter.post('/register', authController.register);
 
+authRouter.post('/google-login', authController.googleLogin);
+
 authRouter.post('/login', authController.login);
 
 authRouter.post('/logout', authController.logout);
