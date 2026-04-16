@@ -31,3 +31,11 @@ export interface BookCreatePayload {
   summery?: string;
   date: string;
 }
+
+export interface EditBookFields {
+  title: string;
+  author: string;
+  price: number;
+  description: string;
+  summery: string;
+}

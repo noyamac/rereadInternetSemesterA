@@ -1,13 +1,6 @@
 import React from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
-
-export interface EditBookFields {
-  title: string;
-  author: string;
-  price: number;
-  description: string;
-  summery: string;
-}
+import type { EditBookFields } from '../../shared/types/book.model';
 
 interface EditBookModalProps {
   show: boolean;
