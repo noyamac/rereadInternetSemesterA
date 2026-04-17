@@ -12,9 +12,11 @@ import { useNavigate } from 'react-router-dom';
 import { booksApi } from '../../api/books';
 import { userApi } from '../../api/user';
 import { useAuth } from '../../hooks/useAuth';
-import Book from '../../shared/components/book/book';
 import type { BookPost } from '../../shared/types/book.model';
 import type { UserProfile } from '../../shared/types/user.model';
+import ConfirmDeleteModal from './confirmDeleteModal';
+import EditBookModal, { type EditBookFields } from './editBookModal';
+import MyListingsSection from './myListingsSection';
 import {
   getStoredAccessToken,
   getUserIdFromToken,
@@ -26,6 +28,17 @@ const Profile: React.FC = () => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [userBooks, setUserBooks] = useState<BookPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [deletingBookId, setDeletingBookId] = useState<string | null>(null);
+  const [confirmingBookId, setConfirmingBookId] = useState<string | null>(null);
+  const [editingBook, setEditingBook] = useState<BookPost | null>(null);
+  const [editFields, setEditFields] = useState<EditBookFields>({
+    title: '',
+    author: '',
+    price: 0,
+    description: '',
+    summery: '',
+  });
+  const [isSaving, setIsSaving] = useState(false);
   const [loadError, setLoadError] = useState('');
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -67,6 +80,69 @@ const Profile: React.FC = () => {
 
     fetchProfileData();
   }, []);
+
+  const removeBook = (bookId: string) => {
+    if (deletingBookId) return;
+    setConfirmingBookId(bookId);
+  };
+
+  const openEdit = (book: BookPost) => {
+    setEditingBook(book);
+    setEditFields({
+      title: book.title,
+      author: book.author,
+      price: book.price,
+      description: book.description,
+      summery: book.summery,
+    });
+  };
+
+  const handleEditFieldChange = (
+    field: keyof EditBookFields,
+    value: string | number,
+  ) => {
+    setEditFields((currentFields) => ({ ...currentFields, [field]: value }));
+  };
+
+  const saveEdit = async () => {
+    if (!editingBook) return;
+    setIsSaving(true);
+    try {
+      const updatedBook = await booksApi.updateBook(
+        editingBook._id,
+        editFields,
+      );
+      setUserBooks((prevUserBooks) =>
+        prevUserBooks.map((currentBook) =>
+          currentBook._id === editingBook._id
+            ? { ...currentBook, ...updatedBook }
+            : currentBook,
+        ),
+      );
+      setEditingBook(null);
+    } catch (error) {
+      console.error('Error updating book:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const confirmRemove = async () => {
+    if (!confirmingBookId) return;
+    const bookId = confirmingBookId;
+    setConfirmingBookId(null);
+    setDeletingBookId(bookId);
+    try {
+      await booksApi.deleteBook(bookId);
+      setUserBooks((prevBooks) =>
+        prevBooks.filter((book) => book._id !== bookId),
+      );
+    } catch (error) {
+      console.error('Error deleting book:', error);
+    } finally {
+      setDeletingBookId(null);
+    }
+  };
 
   const likeBook = async (bookId: string) => {
     try {
@@ -170,27 +246,32 @@ const Profile: React.FC = () => {
         </Card.Body>
       </Card>
 
-      <h4 className="fw-bold mb-4">My Listings</h4>
+      <ConfirmDeleteModal
+        show={!!confirmingBookId}
+        title="Remove Post"
+        message="Are you sure you want to remove this post?"
+        confirmLabel="Yes, Remove"
+        isProcessing={!!deletingBookId}
+        onClose={() => setConfirmingBookId(null)}
+        onConfirm={confirmRemove}
+      />
 
-      {userBooks.length > 0 ? (
-        <Row xs={1} md={2} lg={4} className="g-4">
-          {userBooks.map((book) => (
-            <Col key={book._id}>
-              <Book book={book} onLike={likeBook} />
-            </Col>
-          ))}
-        </Row>
-      ) : (
-        <div
-          className="text-center p-5 bg-white rounded-4 shadow-sm text-muted"
-          style={{ marginTop: '100px' }}
-        >
-          <h5>You haven't posted any books yet.</h5>
-          <Button variant="purple" className="mt-3 rounded-pill text-white">
-            Upload Your First Book
-          </Button>
-        </div>
-      )}
+      <EditBookModal
+        show={!!editingBook}
+        fields={editFields}
+        isSaving={isSaving}
+        onClose={() => setEditingBook(null)}
+        onSave={saveEdit}
+        onFieldChange={handleEditFieldChange}
+      />
+
+      <MyListingsSection
+        books={userBooks}
+        deletingBookId={deletingBookId}
+        onLikeBook={likeBook}
+        onRemoveBook={removeBook}
+        onEditBook={openEdit}
+      />
     </Container>
   );
 };

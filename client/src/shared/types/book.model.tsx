@@ -14,6 +14,7 @@ export interface BookPost {
   price: number;
   imageUrl: string;
   sellerId: string;
+  sellerUsername?: string;
   description: string;
   summery: string;
   comments: BookComment[];
@@ -29,4 +30,12 @@ export interface BookCreatePayload {
   description: string;
   summery?: string;
   date: string;
+}
+
+export interface EditBookFields {
+  title: string;
+  author: string;
+  price: number;
+  description: string;
+  summery: string;
 }

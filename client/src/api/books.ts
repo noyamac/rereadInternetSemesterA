@@ -39,6 +39,15 @@ export const booksApi = {
 
   getUserBooks: (sellerId: string) =>
     api.get(`/${sellerId}/userBooks`).then((r) => parseBooks(r.data)),
+
+  deleteBook: (bookId: string) => api.delete(`/${bookId}`).then((r) => r.data),
+
+  updateBook: (
+    bookId: string,
+    fields: Partial<
+      Pick<BookPost, 'title' | 'author' | 'price' | 'description' | 'summery'>
+    >,
+  ) => api.put(`/${bookId}`, fields).then((r) => parseBooks([r.data])[0]),
 };
 
 const parseBooks = (data: ServerBook[]): BookPost[] => {
@@ -46,6 +55,10 @@ const parseBooks = (data: ServerBook[]): BookPost[] => {
 
   return data.map((book) => ({
     ...book,
+    sellerUsername:
+      typeof book.sellerId === 'string'
+        ? book.sellerUsername
+        : book.sellerId.username,
     sellerId:
       typeof book.sellerId === 'string' ? book.sellerId : book.sellerId._id,
     isLiked: currentUserId
