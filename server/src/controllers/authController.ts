@@ -3,6 +3,9 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { Tokens } from '../utils/types/tokens';
 import { user } from '../model/userModel';
+import { OAuth2Client } from 'google-auth-library';
+
+const client = new OAuth2Client();
 
 const generateToken = (userId: string): Tokens => {
   const secret: string = process.env.JWT_SECRET || 'secretkey';
@@ -161,9 +164,52 @@ const refreshToken = async (req: Request, res: Response) => {
   }
 };
 
+const googleLogin = async (req: Request, res: Response) => {
+  console.log(
+    'Received Google login request with credential:',
+    req.body.credential,
+  );
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: req.body.credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const email = payload?.email;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email not found in Google token' });
+    }
+
+    let currUser = await user.findOne({ email });
+    console.log('Google login - found user:', currUser);
+    if (!currUser) {
+      currUser = await user.create({
+        username: payload?.name || 'Google User',
+        email,
+        password: ' ',
+        profilePicture: payload?.picture,
+      });
+
+    } 
+      const tokens: Tokens = generateToken(currUser._id.toString());
+      currUser.tokens.push(tokens.refreshToken);
+      await currUser.save();
+      console.log('Google login - existing user logged in:', currUser);
+      res.status(200).json({ tokens });
+    
+  } catch (err) {
+    return res
+      .status(400)
+      .json({ error: 'Failed to login with Google', details: err });
+  }
+};
+
 export default {
   register,
   login,
   logout,
   refreshToken,
+  googleLogin,
 };

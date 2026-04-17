@@ -12,6 +12,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { authApi } from '../../api/auth';
 import { storeTokens } from '../../shared/utils/authToken';
+import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
 
 const MIN_PASSWORD_LENGTH = 6;
 
@@ -114,19 +115,47 @@ const AuthPage: React.FC = () => {
     }
   };
 
+  const handleGoogleLoginSuccess = async (
+    credentialResponse: CredentialResponse,
+  ) => {
+    setErrorMessage('');
+    setIsSubmitting(true);
+
+    try {
+      const response = await authApi.googleLogin(
+        credentialResponse.credential!,
+      );
+      storeTokens(response.tokens);
+      window.dispatchEvent(new Event('auth-changed'));
+      navigate('/', { replace: true });
+    } catch (error) {
+      console.error('Google login error:', error);
+      setErrorMessage('Google login failed. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleGoogleLoginError = () => {
+    setErrorMessage('Google login failed. Please try again.');
+  };
+
   return (
     <>
       <style>{`
         .toggle-auth-button {
-          background-color: transparent !important;
-          color: inherit !important;
-          border: none;
+          background-color: #fff !important;
+          color: #0991a0 !important;
+          border: 1px solid #99c1c6 !important;
+          border-radius: 0.375rem !important;
           font-weight: 500;
-          transition: background-color 0.2s ease, color 0.2s ease;
+          transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+          box-shadow: none !important;
         }
         .toggle-auth-button:hover:not(:disabled) {
-          background-color: #e8e8e8 !important;
-          color: #333333 !important;
+          background-color: #e6f3f4 !important;
+          color: #07707a !important;
+          border-color: #99c1c6 !important;
         }
       `}</style>
       <Container className="py-5">
@@ -206,6 +235,13 @@ const AuthPage: React.FC = () => {
                         : 'Login'}
                   </Button>
                 </Form>
+
+                <div className="d-flex justify-content-center mt-4 mb-4">
+                  <GoogleLogin
+                    onSuccess={handleGoogleLoginSuccess}
+                    onError={handleGoogleLoginError}
+                  />
+                </div>
 
                 <div className="text-center mt-4">
                   <Button

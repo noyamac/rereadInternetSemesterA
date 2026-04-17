@@ -11,7 +11,7 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-export const authApi = {
+export const authApi = { 
   login: (formData: LoginPayload) =>
     api
       .post('/login', formData)
@@ -31,4 +31,9 @@ export const authApi = {
     api.post('/logout', undefined, {
       headers: { Authorization: `Bearer ${refreshToken}` },
     }),
+
+    googleLogin: (credential: string) =>
+      api
+        .post('/google-login', { credential })
+        .then((response) => response.data as AuthResponse),
 };
