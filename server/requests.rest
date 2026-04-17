@@ -18,7 +18,7 @@ Content-Type: application/json
     "title": "Harry Potter and the Sorcerer's Stone",
     "author":"J.K. Rowling",
     "price": "15.2",
-    "summery":"book 1 summery",
+    "summary":"book 1 summary",
     "description": "book 1 description",
     "date": "2026-01-01T13:31:41.786Z"
 }

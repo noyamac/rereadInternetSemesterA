@@ -76,7 +76,7 @@ const Book: React.FC<BookProps> = ({
         <Card.Subtitle className="mb-3 text-muted">
           {book.description}
         </Card.Subtitle>
-        <Card.Subtitle className="mb-3">{book.summery}</Card.Subtitle>
+        <Card.Subtitle className="mb-3">{book.summary}</Card.Subtitle>
 
         <div className="mt-auto">
           <div className="d-flex justify-content-between align-items-center mb-2">

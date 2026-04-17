@@ -20,7 +20,7 @@ const UploadBook: React.FC = () => {
     author: '',
     price: '',
     description: '',
-    summery: '',
+    summary: '',
     imageUrl: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,7 +44,7 @@ const UploadBook: React.FC = () => {
       author: formData.author.trim(),
       price: Number(formData.price),
       description: formData.description.trim(),
-      summery: formData.summery.trim() || undefined,
+      summary: formData.summary.trim() || undefined,
       imageUrl: formData.imageUrl.trim() || undefined,
       date: new Date().toISOString(),
     };
@@ -140,13 +140,13 @@ const UploadBook: React.FC = () => {
                 </Row>
 
                 <Form.Group className="mb-4">
-                  <Form.Label className="fw-bold">Detailed Summery</Form.Label>
+                  <Form.Label className="fw-bold">Detailed Summary</Form.Label>
                   <Form.Control
                     as="textarea"
-                    name="summery"
+                    name="summary"
                     rows={4}
                     placeholder="What is this book about?"
-                    value={formData.summery}
+                    value={formData.summary}
                     onChange={handleChange}
                   />
                 </Form.Group>
