@@ -12,7 +12,7 @@ export interface BookPost {
   title: string;
   author: string;
   price: number;
-  imageUrl: string;
+  imageUrl?: string;
   sellerId: string;
   sellerUsername?: string;
   description: string;

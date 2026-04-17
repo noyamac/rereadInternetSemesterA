@@ -21,7 +21,7 @@ const Book: React.FC<BookProps> = ({
   const navigate = useNavigate();
 
   return (
-    <Card className="h-100 shadow-sm border-2">
+    <Card className="shadow-sm border-2">
       <Card.Header className="d-flex justify-content-between align-items-center">
         <span>{book.sellerUsername || book.sellerId}</span>
         {(onRemove || onEdit) && (
@@ -56,14 +56,16 @@ const Book: React.FC<BookProps> = ({
           </Dropdown>
         )}
       </Card.Header>
-      <div className="book-img">
-        <Card.Img
-          variant="top"
-          src={book.imageUrl}
-          className="w-100 h-100"
-          style={{ borderRadius: 0 }}
-        />
-      </div>
+      {book.imageUrl && (
+        <div className="book-img">
+          <Card.Img
+            variant="top"
+            src={book.imageUrl}
+            className="w-100 h-100"
+            style={{ borderRadius: 0, objectFit: 'cover' }}
+          />
+        </div>
+      )}
 
       <Card.Body className="d-flex flex-column">
         <div className="d-flex justify-content-between align-items-start mb-2">
