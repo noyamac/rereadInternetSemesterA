@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { book, BookDocument } from '../model/bookModel';
 import { AuthRequest } from '../utils/types/auth';
 import baseController from './baseController';
+import { AIService } from '../services/aiService';
 
 class BooksController extends baseController<BookDocument> {
   constructor() {
@@ -135,6 +136,43 @@ class BooksController extends baseController<BookDocument> {
       res.status(500).json({ error: 'Error liking book', err });
     }
   }
+
+async searchBooks(req: AuthRequest, res: Response) {
+  const aiService = new AIService();
+  try {
+    const { query } = req.body;
+
+    if (!query || query.trim().length === 0 || query.length > 100) {
+      return res.status(400).json({ message: "Search query is required" });
+    }
+
+    const expandedTerms = await aiService.generateResult(query);
+
+    let books = await this.model.find(
+      { $text: { $search: expandedTerms } },
+      { score: { $meta: "textScore" } }
+    )
+    .sort({ score: { $meta: "textScore" } })
+    .limit(20);
+
+    if (books.length === 0) {
+      books = await this.model.find(
+        { $text: { $search: query } },
+        { score: { $meta: "textScore" } }
+      )
+      .sort({ score: { $meta: "textScore" } })
+      .limit(20);
+    }
+
+    res.status(200).json({
+      data: books
+    });
+
+  } catch (error) {
+    console.error("Search Controller Error:", error);
+    res.status(500).json({ message: "Internal server error during search" });
+  }
+};  
 }
 
 export default new BooksController();

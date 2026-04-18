@@ -24,6 +24,18 @@ const bookSchema = new mongoose.Schema({
   date: { type: Date, required: true },
 });
 
+bookSchema.index({ 
+  title: 'text', 
+  author: 'text', 
+  summery: 'text' 
+}, {
+  weights: {
+    title: 10,
+    author: 5,
+    summery: 1
+  }
+});
+
 export type BookDocument = mongoose.InferSchemaType<typeof bookSchema> &
   mongoose.Document;
 

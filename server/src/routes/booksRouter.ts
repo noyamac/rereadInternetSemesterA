@@ -41,3 +41,10 @@ bookRouter.post(
   authMiddleware,
   booksController.likeBook.bind(booksController),
 );
+
+bookRouter.get(
+  '/search',
+  authMiddleware,
+  booksController.searchBooks.bind(booksController),
+);
+
