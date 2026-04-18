@@ -44,7 +44,7 @@ const UploadBook: React.FC = () => {
       author: formData.author.trim(),
       price: Number(formData.price),
       description: formData.description.trim(),
-      summery: formData.summery.trim() || undefined,
+      summery: formData.summery.trim(),
       imageUrl: formData.imageUrl.trim() || undefined,
       date: new Date().toISOString(),
     };
@@ -140,7 +140,7 @@ const UploadBook: React.FC = () => {
                 </Row>
 
                 <Form.Group className="mb-4">
-                  <Form.Label className="fw-bold">Detailed Summery</Form.Label>
+                  <Form.Label className="fw-bold">Detailed Summery *</Form.Label>
                   <Form.Control
                     as="textarea"
                     name="summery"
@@ -148,6 +148,7 @@ const UploadBook: React.FC = () => {
                     placeholder="What is this book about?"
                     value={formData.summery}
                     onChange={handleChange}
+                    required
                   />
                 </Form.Group>
 

@@ -153,13 +153,24 @@ const Home: React.FC = () => {
           </Col>
         </Row>
 
-        <Row xs={1} md={2} lg={4} className="g-4">
-          {books.map((book) => (
-            <Col key={book._id}>
-              <Book book={book} onLike={likeBook} />
+        {books.length > 0 ? (
+          <Row xs={1} md={2} lg={4} className="g-4">
+            {books.map((book) => (
+              <Col key={book._id}>
+                <Book book={book} onLike={likeBook} />
+              </Col>
+            ))}
+          </Row>
+        ) : isSearchMode ? (
+          <Row className="justify-content-center">
+            <Col xs={12} className="text-center py-5">
+              <p className="text-muted fs-5">
+                No books found matching your search. Try adjusting your search
+                terms.
+              </p>
             </Col>
-          ))}
-        </Row>
+          </Row>
+        ) : null}
 
         {hasMore && (
           <Row className="justify-content-center mt-4">
