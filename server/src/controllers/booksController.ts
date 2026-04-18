@@ -156,7 +156,7 @@ class BooksController extends baseController<BookDocument> {
             { title: { $regex: searchInput, $options: 'i' } },
             { author: { $regex: searchInput, $options: 'i' } },
             { description: { $regex: searchInput, $options: 'i' } },
-            { summery: { $regex: searchInput, $options: 'i' } },
+            { summary: { $regex: searchInput, $options: 'i' } },
           ],
         })
         .populate('sellerId', 'username')
@@ -184,7 +184,6 @@ class BooksController extends baseController<BookDocument> {
       }
 
       const expandedTerms = await aiService.generateResult(searchInput);
-
       let books = await this.model
         .find(
           { $text: { $search: expandedTerms } },
@@ -196,12 +195,15 @@ class BooksController extends baseController<BookDocument> {
 
       if (books.length === 0) {
         books = await this.model
-          .find(
-            { $text: { $search: searchInput } },
-            { score: { $meta: 'textScore' } },
-          )
+          .find({
+            $or: [
+              { title: { $regex: searchInput, $options: 'i' } },
+              { author: { $regex: searchInput, $options: 'i' } },
+              { description: { $regex: searchInput, $options: 'i' } },
+              { summary: { $regex: searchInput, $options: 'i' } },
+            ],
+          })
           .populate('sellerId', 'username')
-          .sort({ score: { $meta: 'textScore' } })
           .limit(20);
       }
 

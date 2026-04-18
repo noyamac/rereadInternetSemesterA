@@ -6,7 +6,7 @@ export const getPrompt = (userInput: string) => `
       1. EXTRACT: Identify the core subjects, themes, and intent.
       2. EXPAND: Include synonyms, hypernyms (broader terms), and hyponyms (specific terms) (e.g., if "wizard", include "magic, sorcerer, spells")..
       3. CONTEXT: Include associated genres, famous tropes, and setting-related vocabulary.
-      4. QUANTITY: Always provide between 15 and 25 high-quality keywords.
+      4. QUANTITY: Always provide atleast between 15 and 25 high-quality keywords.
       5. FORMAT: Return ONLY a valid JSON object. No conversational text, no markdown code blocks.
       6. Return ONLY the keywords, no sentences or punctuation.
 

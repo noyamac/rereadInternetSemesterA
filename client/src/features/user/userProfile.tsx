@@ -36,7 +36,7 @@ const Profile: React.FC = () => {
     author: '',
     price: 0,
     description: '',
-    summery: '',
+    summary: '',
   });
   const [isSaving, setIsSaving] = useState(false);
   const [loadError, setLoadError] = useState('');
@@ -93,7 +93,7 @@ const Profile: React.FC = () => {
       author: book.author,
       price: book.price,
       description: book.description,
-      summery: book.summery,
+      summary: book.summary,
     });
   };
 
