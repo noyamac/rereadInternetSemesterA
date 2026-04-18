@@ -55,6 +55,7 @@ const parseBooks = (data: ServerBook[]): BookPost[] => {
 
   return data.map((book) => ({
     ...book,
+    imageUrl: book.imageUrl || '',
     sellerUsername:
       typeof book.sellerId === 'string'
         ? book.sellerUsername
