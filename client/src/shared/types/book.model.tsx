@@ -12,11 +12,11 @@ export interface BookPost {
   title: string;
   author: string;
   price: number;
-  imageUrl: string;
+  imageUrl?: string;
   sellerId: string;
   sellerUsername?: string;
   description: string;
-  summery: string;
+  summary: string;
   comments: BookComment[];
   likes: number;
   isLiked: boolean;
@@ -28,7 +28,7 @@ export interface BookCreatePayload {
   price: number;
   imageUrl?: string;
   description: string;
-  summery?: string;
+  summary?: string;
   date: string;
 }
 
@@ -37,5 +37,5 @@ export interface EditBookFields {
   author: string;
   price: number;
   description: string;
-  summery: string;
+  summary: string;
 }

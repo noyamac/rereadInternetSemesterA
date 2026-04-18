@@ -103,8 +103,8 @@ const EditBookModal: React.FC<EditBookModalProps> = ({
             <Form.Control
               as="textarea"
               rows={3}
-              value={fields.summery}
-              onChange={(event) => onFieldChange('summery', event.target.value)}
+              value={fields.summary}
+              onChange={(event) => onFieldChange('summary', event.target.value)}
             />
           </Form.Group>
         </Form>

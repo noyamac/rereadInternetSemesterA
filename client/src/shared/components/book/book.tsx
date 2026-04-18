@@ -1,5 +1,6 @@
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Badge, Button, Card, Dropdown } from 'react-bootstrap';
+import { Badge, Button, Card, Dropdown, Modal } from 'react-bootstrap';
 import type { BookPost } from '../../types/book.model';
 import './book.css';
 
@@ -19,9 +20,10 @@ const Book: React.FC<BookProps> = ({
   isRemoving = false,
 }) => {
   const navigate = useNavigate();
+  const [showTextModal, setShowTextModal] = useState(false);
 
   return (
-    <Card className="h-100 shadow-sm border-2">
+    <Card className={`shadow-sm border-2 ${book.imageUrl ? 'h-100' : ''}`}>
       <Card.Header className="d-flex justify-content-between align-items-center">
         <span>{book.sellerUsername || book.sellerId}</span>
         {(onRemove || onEdit) && (
@@ -56,27 +58,37 @@ const Book: React.FC<BookProps> = ({
           </Dropdown>
         )}
       </Card.Header>
-      <div className="book-img">
-        <Card.Img
-          variant="top"
-          src={book.imageUrl}
-          className="w-100 h-100"
-          style={{ borderRadius: 0 }}
-        />
-      </div>
+      {book.imageUrl && (
+        <div className="book-img">
+          <Card.Img
+            variant="top"
+            src={book.imageUrl}
+            className="w-100 h-100"
+            style={{ borderRadius: 0, objectFit: 'cover' }}
+          />
+        </div>
+      )}
 
       <Card.Body className="d-flex flex-column">
-        <div className="d-flex justify-content-between align-items-start mb-2">
-          <Card.Title className="mb-0" style={{ maxWidth: '70%' }}>
-            {book.title} | By {book.author}
+        <div className="d-flex justify-content-between align-items-start mb-2 w-100">
+          <Card.Title className="mb-0 d-flex flex-nowrap" style={{ maxWidth: '75%', minWidth: 0 }} title={`${book.title} | By ${book.author}`}>
+            <span className="text-truncate" style={{ minWidth: 0 }}>{book.title}</span>
+            <span className="mx-1" style={{ flexShrink: 0 }}> | By </span>
+            <span className="text-truncate" style={{ minWidth: 0 }}>{book.author}</span>
           </Card.Title>
-          <Badge bg="light-green">${book.price}</Badge>
+          <Badge bg="light-green" className="flex-shrink-0 ms-2">${book.price}</Badge>
         </div>
 
-        <Card.Subtitle className="mb-3 text-muted">
-          {book.description}
-        </Card.Subtitle>
-        <Card.Subtitle className="mb-3">{book.summery}</Card.Subtitle>
+        <div style={{ cursor: 'pointer' }} onClick={() => setShowTextModal(true)} title="Click to read full description">
+          <Card.Subtitle className={`mb-3 text-muted ${book.imageUrl ? 'text-truncate-multi' : 'text-truncate-extended'}`}>
+            {book.description}
+          </Card.Subtitle>
+          {book.summary && (
+            <Card.Subtitle className={`mb-3 ${book.imageUrl ? 'text-truncate-multi' : 'text-truncate-extended'}`}>
+              {book.summary}
+            </Card.Subtitle>
+          )}
+        </div>
 
         <div className="mt-auto">
           <div className="d-flex justify-content-between align-items-center mb-2">
@@ -100,6 +112,22 @@ const Book: React.FC<BookProps> = ({
           </Button>
         </div>
       </Card.Body>
+
+      <Modal show={showTextModal} onHide={() => setShowTextModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>{book.title}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h6 className="fw-bold">Description</h6>
+          <p style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{book.description}</p>
+          {book.summary && (
+            <>
+              <h6 className="mt-4 fw-bold">Summary</h6>
+              <p style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{book.summary}</p>
+            </>
+          )}
+        </Modal.Body>
+      </Modal>
     </Card>
   );
 };
