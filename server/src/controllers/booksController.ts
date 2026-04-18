@@ -1,9 +1,9 @@
 import { Response } from 'express';
 import mongoose from 'mongoose';
 import { book, BookDocument } from '../model/bookModel';
+import { AIService } from '../services/aiService';
 import { AuthRequest } from '../utils/types/auth';
 import baseController from './baseController';
-import { AIService } from '../services/aiService';
 
 class BooksController extends baseController<BookDocument> {
   constructor() {
@@ -137,42 +137,82 @@ class BooksController extends baseController<BookDocument> {
     }
   }
 
-async searchBooks(req: AuthRequest, res: Response) {
-  const aiService = new AIService();
-  try {
-    const { query } = req.body;
+  async regularSearch(req: AuthRequest, res: Response) {
+    try {
+      const { searchInput } = req.body.params;
+      if (
+        !searchInput ||
+        searchInput.trim().length < 3 ||
+        searchInput.length > 150
+      ) {
+        return res
+          .status(400)
+          .json({ message: 'Search query must be at least 3 characters long' });
+      }
 
-    if (!query || query.trim().length === 0 || query.length > 100) {
-      return res.status(400).json({ message: "Search query is required" });
+      const books = await this.model
+        .find({
+          $or: [
+            { title: { $regex: searchInput, $options: 'i' } },
+            { author: { $regex: searchInput, $options: 'i' } },
+            { description: { $regex: searchInput, $options: 'i' } },
+            { summery: { $regex: searchInput, $options: 'i' } },
+          ],
+        })
+        .populate('sellerId', 'username')
+        .limit(20);
+
+      res.status(200).json({
+        data: books,
+      });
+    } catch (error) {
+      console.error('Regular Search Controller Error:', error);
+      res.status(500).json({ message: 'Internal server error during search' });
     }
-
-    const expandedTerms = await aiService.generateResult(query);
-
-    let books = await this.model.find(
-      { $text: { $search: expandedTerms } },
-      { score: { $meta: "textScore" } }
-    )
-    .sort({ score: { $meta: "textScore" } })
-    .limit(20);
-
-    if (books.length === 0) {
-      books = await this.model.find(
-        { $text: { $search: query } },
-        { score: { $meta: "textScore" } }
-      )
-      .sort({ score: { $meta: "textScore" } })
-      .limit(20);
-    }
-
-    res.status(200).json({
-      data: books
-    });
-
-  } catch (error) {
-    console.error("Search Controller Error:", error);
-    res.status(500).json({ message: "Internal server error during search" });
   }
-};  
+
+  async aiSearch(req: AuthRequest, res: Response) {
+    const aiService = new AIService();
+    try {
+      const { searchInput } = req.body.params;
+      if (
+        !searchInput ||
+        searchInput.trim().length === 0 ||
+        searchInput.length > 150
+      ) {
+        return res.status(400).json({ message: 'Search query is required' });
+      }
+
+      const expandedTerms = await aiService.generateResult(searchInput);
+
+      let books = await this.model
+        .find(
+          { $text: { $search: expandedTerms } },
+          { score: { $meta: 'textScore' } },
+        )
+        .populate('sellerId', 'username')
+        .sort({ score: { $meta: 'textScore' } })
+        .limit(20);
+
+      if (books.length === 0) {
+        books = await this.model
+          .find(
+            { $text: { $search: searchInput } },
+            { score: { $meta: 'textScore' } },
+          )
+          .populate('sellerId', 'username')
+          .sort({ score: { $meta: 'textScore' } })
+          .limit(20);
+      }
+
+      res.status(200).json({
+        data: books,
+      });
+    } catch (error) {
+      console.error('Search Controller Error:', error);
+      res.status(500).json({ message: 'Internal server error during search' });
+    }
+  }
 }
 
 export default new BooksController();
