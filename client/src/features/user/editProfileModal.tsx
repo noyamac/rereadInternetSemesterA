@@ -59,10 +59,24 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       </Form>
     </Modal.Body>
     <Modal.Footer>
-      <Button variant="secondary" onClick={onClose} disabled={isSaving}>
+      <Button
+        variant="light"
+        onClick={onClose}
+        disabled={isSaving}
+        style={{ borderColor: '#87B6BC', color: '#4d7f86' }}
+      >
         Cancel
       </Button>
-      <Button variant="primary" onClick={onSave} disabled={isSaving}>
+      <Button
+        variant="light"
+        onClick={onSave}
+        disabled={isSaving}
+        style={{
+          backgroundColor: '#87B6BC',
+          borderColor: '#87B6BC',
+          color: '#ffffff',
+        }}
+      >
         {isSaving ? 'Saving...' : 'Save Changes'}
       </Button>
     </Modal.Footer>

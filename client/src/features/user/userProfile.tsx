@@ -14,9 +14,10 @@ import { booksApi } from '../../api/books';
 import { userApi } from '../../api/user';
 import { useAuth } from '../../hooks/useAuth';
 import type { BookPost } from '../../shared/types/book.model';
+import type { EditBookFields } from '../../shared/types/book.model';
 import type { UserProfile } from '../../shared/types/user.model';
 import ConfirmDeleteModal from './confirmDeleteModal';
-import EditBookModal, { type EditBookFields } from './editBookModal';
+import EditBookModal from './editBookModal';
 import EditProfileModal, { type EditProfileFields } from './editProfileModal';
 import MyListingsSection from './myListingsSection';
 import {
@@ -249,7 +250,7 @@ const Profile: React.FC = () => {
         className="d-flex justify-content-center align-items-center"
         style={{ minHeight: '60vh' }}
       >
-        <Spinner animation="border" variant="purple" />
+        <Spinner animation="border" style={{ color: '#87B6BC' }} />
       </Container>
     );
   }
@@ -267,7 +268,7 @@ const Profile: React.FC = () => {
   return (
     <Container className="py-5">
       <Card className="border-0 shadow-sm mb-5 rounded-4 overflow-hidden">
-        <div className="bg-purple" style={{ height: '120px' }}></div>
+        <div style={{ height: '120px', backgroundColor: '#87B6BC' }}></div>
         <Card.Body className="px-5 pb-5 position-relative">
           <img
             src={user.profilePicture}
@@ -285,7 +286,7 @@ const Profile: React.FC = () => {
             <Col md={8}>
               <h2 className="fw-bold mb-1">{user.username}</h2>
               <p className="text-muted mb-2">{user.email}</p>
-              <Badge bg="purple" className="px-3 py-2 rounded-pill text-white">
+              <Badge bg="light-green" className="px-3 py-2 rounded-pill">
                 {userBooks.length} Active Listings
               </Badge>
             </Col>
@@ -294,19 +295,29 @@ const Profile: React.FC = () => {
               className="d-flex flex-column align-items-center align-items-md-end mt-3 mt-md-0 gap-3"
             >
               <Button
-                variant="outline-primary"
+                variant="light"
                 className="rounded-pill px-4"
                 onClick={openEditProfile}
-                style={{ minWidth: '150px' }}
+                style={{
+                  minWidth: '150px',
+                  backgroundColor: '#59AC77',
+                  borderColor: '#59AC77',
+                  color: '#ffffff',
+                }}
               >
                 Edit Profile
               </Button>
               <Button
-                variant="outline-danger"
+                variant="light"
                 className="rounded-pill px-4"
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                style={{ minWidth: '150px' }}
+                style={{
+                  minWidth: '150px',
+                  backgroundColor: '#dc3545',
+                  borderColor: '#dc3545',
+                  color: '#ffffff',
+                }}
               >
                 {isLoggingOut ? 'Logging out...' : 'Logout'}
               </Button>
