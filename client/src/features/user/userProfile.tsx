@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+  Alert,
   Badge,
   Button,
   Card,
@@ -16,6 +17,7 @@ import type { BookPost } from '../../shared/types/book.model';
 import type { UserProfile } from '../../shared/types/user.model';
 import ConfirmDeleteModal from './confirmDeleteModal';
 import EditBookModal, { type EditBookFields } from './editBookModal';
+import EditProfileModal, { type EditProfileFields } from './editProfileModal';
 import MyListingsSection from './myListingsSection';
 import {
   getStoredAccessToken,
@@ -39,6 +41,14 @@ const Profile: React.FC = () => {
     summary: '',
   });
   const [isSaving, setIsSaving] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [profileError, setProfileError] = useState('');
+  const [profileSuccess, setProfileSuccess] = useState('');
+  const [profileFields, setProfileFields] = useState<EditProfileFields>({
+    username: '',
+    profilePicture: '',
+  });
   const [loadError, setLoadError] = useState('');
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -69,6 +79,10 @@ const Profile: React.FC = () => {
         ]);
 
         setUser(userData);
+        setProfileFields({
+          username: userData.username,
+          profilePicture: userData.profilePicture || '',
+        });
         setUserBooks(booksData);
       } catch (error) {
         console.error('Error fetching profile data:', error);
@@ -175,6 +189,60 @@ const Profile: React.FC = () => {
     }
   };
 
+  const openEditProfile = () => {
+    if (!user) return;
+
+    setProfileError('');
+    setProfileSuccess('');
+    setProfileFields({
+      username: user.username,
+      profilePicture: user.profilePicture || '',
+    });
+    setIsEditingProfile(true);
+  };
+
+  const handleProfileFieldChange = (
+    field: keyof EditProfileFields,
+    value: string,
+  ) => {
+    setProfileFields((currentFields) => ({ ...currentFields, [field]: value }));
+  };
+
+  const saveProfile = async () => {
+    if (!user) return;
+
+    const trimmedUsername = profileFields.username.trim();
+
+    if (!trimmedUsername) {
+      setProfileError('Username is required.');
+      return;
+    }
+
+    setProfileError('');
+    setProfileSuccess('');
+    setIsSavingProfile(true);
+
+    try {
+      const updatedUser = await userApi.updateUser(user._id, {
+        username: trimmedUsername,
+        profilePicture: profileFields.profilePicture.trim() || undefined,
+      });
+
+      setUser(updatedUser);
+      setProfileFields({
+        username: updatedUser.username,
+        profilePicture: updatedUser.profilePicture || '',
+      });
+      setIsEditingProfile(false);
+      setProfileSuccess('Profile updated successfully.');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setProfileError('Failed to save profile changes.');
+    } finally {
+      setIsSavingProfile(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <Container
@@ -228,6 +296,7 @@ const Profile: React.FC = () => {
               <Button
                 variant="outline-primary"
                 className="rounded-pill px-4"
+                onClick={openEditProfile}
                 style={{ minWidth: '150px' }}
               >
                 Edit Profile
@@ -246,6 +315,17 @@ const Profile: React.FC = () => {
         </Card.Body>
       </Card>
 
+      {profileSuccess ? (
+        <Alert
+          variant="success"
+          className="rounded-4 border-0 shadow-sm mb-4"
+          onClose={() => setProfileSuccess('')}
+          dismissible
+        >
+          {profileSuccess}
+        </Alert>
+      ) : null}
+
       <ConfirmDeleteModal
         show={!!confirmingBookId}
         title="Remove Post"
@@ -254,6 +334,16 @@ const Profile: React.FC = () => {
         isProcessing={!!deletingBookId}
         onClose={() => setConfirmingBookId(null)}
         onConfirm={confirmRemove}
+      />
+
+      <EditProfileModal
+        show={isEditingProfile}
+        fields={profileFields}
+        isSaving={isSavingProfile}
+        errorMessage={profileError}
+        onClose={() => setIsEditingProfile(false)}
+        onSave={saveProfile}
+        onFieldChange={handleProfileFieldChange}
       />
 
       <EditBookModal
