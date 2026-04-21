@@ -147,7 +147,7 @@ class BooksController extends baseController<BookDocument> {
       ) {
         return res
           .status(400)
-          .json({ message: 'Search query must be at least 3 characters long' });
+          .json({ message: 'Search query must be between 3 to 150 characters' });
       }
 
       const books = await this.model
@@ -180,7 +180,7 @@ class BooksController extends baseController<BookDocument> {
         searchInput.trim().length === 0 ||
         searchInput.length > 150
       ) {
-        return res.status(400).json({ message: 'Search query is required' });
+        return res.status(400).json({ message: 'Search query must be between 3 to 150 characters' });
       }
 
       const expandedTerms = await aiService.generateResult(searchInput);
