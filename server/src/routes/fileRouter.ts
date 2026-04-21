@@ -11,10 +11,9 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + '.' + ext);
   },
 });
-
 const upload = multer({ storage: storage });
 
-router.post('/', upload.single('file'), function (req, res) {
+const handleUpload = (req: express.Request, res: express.Response) => {
   const base =
     'http://' + process.env.DOMAIN_BASE + ':' + process.env.PORT + '/';
 
@@ -26,6 +25,8 @@ router.post('/', upload.single('file'), function (req, res) {
 
   const url = base + filePath;
   res.status(200).send({ url });
-});
+};
+
+router.post('/', upload.single('file'), handleUpload);
 
 export default router;
