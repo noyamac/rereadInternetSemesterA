@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import { authRouter } from './routes/authRouter';
 import { bookRouter } from './routes/booksRouter';
 import { commentRouter } from './routes/commentRouter';
+import fileRouter from './routes/fileRouter';
 import userRouter from './routes/userRouter';
 
 dotenv.config();
@@ -17,6 +18,8 @@ app.use(bodyParser.json());
 app.use('/book', bookRouter);
 app.use('/comment', commentRouter);
 app.use('/auth', authRouter);
+app.use('/public/photos', express.static('public/photos'));
+app.use('/file', fileRouter);
 app.use('/user', userRouter);
 
 export const initApp = (): Promise<Express> => {

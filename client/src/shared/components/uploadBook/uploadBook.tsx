@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { AxiosError } from 'axios';
 import {
   Container,
@@ -11,6 +11,7 @@ import {
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { booksApi } from '../../../api/books';
+import { fileApi } from '../../../api/file';
 import type { BookCreatePayload } from '../../types/book.model';
 
 const UploadBook: React.FC = () => {
@@ -23,6 +24,8 @@ const UploadBook: React.FC = () => {
     summary: '',
     imageUrl: '',
   });
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -33,23 +36,49 @@ const UploadBook: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setImageFile(file);
+  };
+
+  useEffect(() => {
+    if (!imageFile) {
+      setImagePreviewUrl('');
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(imageFile);
+    setImagePreviewUrl(objectUrl);
+
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [imageFile]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     setErrorMessage('');
     setIsSubmitting(true);
 
-    const payload: BookCreatePayload = {
-      title: formData.title.trim(),
-      author: formData.author.trim(),
-      price: Number(formData.price),
-      description: formData.description.trim(),
-      summary: formData.summary.trim() || undefined,
-      imageUrl: formData.imageUrl.trim() || undefined,
-      date: new Date().toISOString(),
-    };
+    let uploadedImageUrl: string | undefined;
 
     try {
+      if (imageFile) {
+        const uploadResponse = await fileApi.uploadImage(imageFile);
+        uploadedImageUrl = uploadResponse.url;
+      }
+
+      const payload: BookCreatePayload = {
+        title: formData.title.trim(),
+        author: formData.author.trim(),
+        price: Number(formData.price),
+        description: formData.description.trim(),
+        summary: formData.summary.trim() || undefined,
+        imageUrl: uploadedImageUrl,
+        date: new Date().toISOString(),
+      };
+
       await booksApi.createBook(payload);
       navigate('/');
     } catch (error) {
@@ -125,17 +154,29 @@ const UploadBook: React.FC = () => {
                     </InputGroup>
                   </Col>
                   <Col md={6}>
-                    <Form.Label className="fw-bold">Image URL</Form.Label>
+                    <Form.Label className="fw-bold">Book Image</Form.Label>
                     <Form.Control
-                      type="text"
-                      name="imageUrl"
-                      placeholder="Temporary image URL"
-                      value={formData.imageUrl}
-                      onChange={handleChange}
+                      type="file"
+                      name="imageFile"
+                      accept="image/*"
+                      onChange={handleImageChange}
                     />
-                    <Form.Text className="text-muted">
-                      {/* TODO: replace this temporary URL field with real image upload */}
-                    </Form.Text>
+                    <Form.Text className="text-muted"></Form.Text>
+                    {imagePreviewUrl ? (
+                      <div className="mt-3">
+                        <img
+                          src={imagePreviewUrl}
+                          alt="Selected preview"
+                          style={{
+                            width: '100%',
+                            maxHeight: 220,
+                            objectFit: 'cover',
+                            borderRadius: 8,
+                            border: '1px solid #dee2e6',
+                          }}
+                        />
+                      </div>
+                    ) : null}
                   </Col>
                 </Row>
 
