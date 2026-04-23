@@ -177,7 +177,7 @@ class BooksController extends baseController<BookDocument> {
       const { searchInput } = req.body.params;
       if (
         !searchInput ||
-        searchInput.trim().length === 0 ||
+        searchInput.trim().length < 3 ||
         searchInput.length > 150
       ) {
         return res.status(400).json({ message: 'Search query must be between 3 to 150 characters' });
