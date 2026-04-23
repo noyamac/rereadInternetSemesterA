@@ -11,6 +11,7 @@ import {
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { booksApi } from '../../api/books';
+import { fileApi } from '../../api/file';
 import { userApi } from '../../api/user';
 import { useAuth } from '../../hooks/useAuth';
 import type { BookPost } from '../../shared/types/book.model';
@@ -25,6 +26,8 @@ import {
   getUserIdFromToken,
 } from '../../shared/utils/authToken';
 import './userProfile.css';
+
+const DEFAULT_PROFILE_PICTURE = '/public/photos/default-profile-picture.jpg';
 
 const Profile: React.FC = () => {
   const navigate = useNavigate();
@@ -49,10 +52,21 @@ const Profile: React.FC = () => {
   const [profileSuccess, setProfileSuccess] = useState('');
   const [profileFields, setProfileFields] = useState<EditProfileFields>({
     username: '',
-    profilePicture: '',
   });
+  const [profilePictureFile, setProfilePictureFile] = useState<File | null>(
+    null,
+  );
+  const [profilePicturePreview, setProfilePicturePreview] = useState('');
   const [loadError, setLoadError] = useState('');
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      if (profilePicturePreview) {
+        URL.revokeObjectURL(profilePicturePreview);
+      }
+    };
+  }, [profilePicturePreview]);
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -83,7 +97,6 @@ const Profile: React.FC = () => {
         setUser(userData);
         setProfileFields({
           username: userData.username,
-          profilePicture: userData.profilePicture || '',
         });
         setUserBooks(booksData);
       } catch (error) {
@@ -196,11 +209,36 @@ const Profile: React.FC = () => {
 
     setProfileError('');
     setProfileSuccess('');
+    setProfilePictureFile(null);
+    setProfilePicturePreview('');
     setProfileFields({
       username: user.username,
-      profilePicture: user.profilePicture || '',
     });
     setIsEditingProfile(true);
+  };
+
+  const closeEditProfile = () => {
+    setIsEditingProfile(false);
+    if (profilePicturePreview) {
+      URL.revokeObjectURL(profilePicturePreview);
+    }
+    setProfilePicturePreview('');
+    setProfilePictureFile(null);
+  };
+
+  const handleProfilePictureChange = (file: File | null) => {
+    if (profilePicturePreview) {
+      URL.revokeObjectURL(profilePicturePreview);
+    }
+
+    if (!file) {
+      setProfilePictureFile(null);
+      setProfilePicturePreview('');
+      return;
+    }
+
+    setProfilePictureFile(file);
+    setProfilePicturePreview(URL.createObjectURL(file));
   };
 
   const handleProfileFieldChange = (
@@ -225,17 +263,22 @@ const Profile: React.FC = () => {
     setIsSavingProfile(true);
 
     try {
+      let profilePictureUrl = user.profilePicture || DEFAULT_PROFILE_PICTURE;
+      if (profilePictureFile) {
+        const uploaded = await fileApi.uploadImage(profilePictureFile);
+        profilePictureUrl = uploaded.url;
+      }
+
       const updatedUser = await userApi.updateUser(user._id, {
         username: trimmedUsername,
-        profilePicture: profileFields.profilePicture.trim() || undefined,
+        profilePicture: profilePictureUrl || undefined,
       });
 
       setUser(updatedUser);
       setProfileFields({
         username: updatedUser.username,
-        profilePicture: updatedUser.profilePicture || '',
       });
-      setIsEditingProfile(false);
+      closeEditProfile();
       setProfileSuccess('Profile updated successfully.');
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -269,9 +312,18 @@ const Profile: React.FC = () => {
         <div className="profile-header"></div>
         <Card.Body className="px-5 pb-5 position-relative">
           <img
-            src={user.profilePicture}
+            src={user.profilePicture || DEFAULT_PROFILE_PICTURE}
             alt={user.username}
             className="rounded-circle border border-4 border-white shadow-sm mb-3 profile-picture"
+            onError={(event) => {
+              const image = event.currentTarget;
+              if (image.src.includes(DEFAULT_PROFILE_PICTURE)) {
+                image.onerror = null;
+                return;
+              }
+              image.onerror = null;
+              image.src = DEFAULT_PROFILE_PICTURE;
+            }}
           />
           <Row>
             <Col md={8}>
@@ -329,10 +381,13 @@ const Profile: React.FC = () => {
       <EditProfileModal
         show={isEditingProfile}
         fields={profileFields}
+        currentProfilePicture={user.profilePicture || DEFAULT_PROFILE_PICTURE}
+        previewProfilePicture={profilePicturePreview}
         isSaving={isSavingProfile}
         errorMessage={profileError}
-        onClose={() => setIsEditingProfile(false)}
+        onClose={closeEditProfile}
         onSave={saveProfile}
+        onFileChange={handleProfilePictureChange}
         onFieldChange={handleProfileFieldChange}
       />
 

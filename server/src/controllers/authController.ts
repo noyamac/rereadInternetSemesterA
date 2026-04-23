@@ -7,6 +7,14 @@ import { OAuth2Client } from 'google-auth-library';
 
 const client = new OAuth2Client();
 
+const serverBaseUrl = (): string => {
+  const domain = process.env.DOMAIN_BASE || 'localhost';
+  const port = process.env.PORT || '8080';
+  return `http://${domain}:${port}`;
+};
+
+const DEFAULT_PROFILE_PICTURE = `${serverBaseUrl()}/public/photos/default-profile-picture.jpg`;
+
 const generateToken = (userId: string): Tokens => {
   const secret: string = process.env.JWT_SECRET || 'secretkey';
   const refreshTokenSecret: string =
@@ -48,7 +56,7 @@ const register = async (req: Request, res: Response) => {
       username,
       email,
       password: encryptedPassword,
-      profilePicture,
+      profilePicture: profilePicture || DEFAULT_PROFILE_PICTURE,
     });
 
     const tokens: Tokens = generateToken(newUser._id.toString());
@@ -189,16 +197,14 @@ const googleLogin = async (req: Request, res: Response) => {
         username: payload?.name || 'Google User',
         email,
         password: ' ',
-        profilePicture: payload?.picture,
+        profilePicture: payload?.picture || DEFAULT_PROFILE_PICTURE,
       });
-
-    } 
-      const tokens: Tokens = generateToken(currUser._id.toString());
-      currUser.tokens.push(tokens.refreshToken);
-      await currUser.save();
-      console.log('Google login - existing user logged in:', currUser);
-      res.status(200).json({ tokens });
-    
+    }
+    const tokens: Tokens = generateToken(currUser._id.toString());
+    currUser.tokens.push(tokens.refreshToken);
+    await currUser.save();
+    console.log('Google login - existing user logged in:', currUser);
+    res.status(200).json({ tokens });
   } catch (err) {
     return res
       .status(400)
