@@ -1,0 +1,11 @@
+.edit-profile-cancel-button {
+  border-color: #87b6bc !important;
+  color: #4d7f86 !important;
+}
+
+.edit-profile-save-button {
+  background-color: #5f97a0 !important;
+  border-color: #5f97a0 !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}

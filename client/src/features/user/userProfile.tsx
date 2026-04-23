@@ -24,6 +24,7 @@ import {
   getStoredAccessToken,
   getUserIdFromToken,
 } from '../../shared/utils/authToken';
+import './userProfile.css';
 
 const Profile: React.FC = () => {
   const navigate = useNavigate();
@@ -246,11 +247,8 @@ const Profile: React.FC = () => {
 
   if (isLoading) {
     return (
-      <Container
-        className="d-flex justify-content-center align-items-center"
-        style={{ minHeight: '60vh' }}
-      >
-        <Spinner animation="border" style={{ color: '#87B6BC' }} />
+      <Container className="profile-loader d-flex justify-content-center align-items-center">
+        <Spinner animation="border" className="profile-loader-spinner" />
       </Container>
     );
   }
@@ -268,19 +266,12 @@ const Profile: React.FC = () => {
   return (
     <Container className="py-5">
       <Card className="border-0 shadow-sm mb-5 rounded-4 overflow-hidden">
-        <div style={{ height: '120px', backgroundColor: '#87B6BC' }}></div>
+        <div className="profile-header"></div>
         <Card.Body className="px-5 pb-5 position-relative">
           <img
             src={user.profilePicture}
             alt={user.username}
-            className="rounded-circle border border-4 border-white shadow-sm mb-3"
-            style={{
-              width: '100px',
-              height: '100px',
-              marginTop: '-65px',
-              objectFit: 'cover',
-              backgroundColor: 'white',
-            }}
+            className="rounded-circle border border-4 border-white shadow-sm mb-3 profile-picture"
           />
           <Row>
             <Col md={8}>
@@ -296,28 +287,16 @@ const Profile: React.FC = () => {
             >
               <Button
                 variant="light"
-                className="rounded-pill px-4"
+                className="rounded-pill px-4 profile-edit-button"
                 onClick={openEditProfile}
-                style={{
-                  minWidth: '150px',
-                  backgroundColor: '#59AC77',
-                  borderColor: '#59AC77',
-                  color: '#ffffff',
-                }}
               >
                 Edit Profile
               </Button>
               <Button
                 variant="light"
-                className="rounded-pill px-4"
+                className="rounded-pill px-4 profile-logout-button"
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                style={{
-                  minWidth: '150px',
-                  backgroundColor: '#dc3545',
-                  borderColor: '#dc3545',
-                  color: '#ffffff',
-                }}
               >
                 {isLoggingOut ? 'Logging out...' : 'Logout'}
               </Button>

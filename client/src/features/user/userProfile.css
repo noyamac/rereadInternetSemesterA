@@ -1,0 +1,34 @@
+.profile-loader {
+  min-height: 60vh;
+}
+
+.profile-loader-spinner {
+  color: #87b6bc;
+}
+
+.profile-header {
+  height: 120px;
+  background-color: #87b6bc;
+}
+
+.profile-picture {
+  width: 100px;
+  height: 100px;
+  margin-top: -65px;
+  object-fit: cover;
+  background-color: #ffffff;
+}
+
+.profile-edit-button {
+  min-width: 150px;
+  background-color: #59ac77 !important;
+  border-color: #59ac77 !important;
+  color: #ffffff !important;
+}
+
+.profile-logout-button {
+  min-width: 150px;
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+  color: #ffffff !important;
+}

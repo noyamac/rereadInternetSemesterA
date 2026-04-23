@@ -1,5 +1,6 @@
 import { Response } from 'express';
 import { AuthRequest } from '../utils/types/auth';
+import { UserProfilePayload } from '../utils/types/user';
 import { user, UserDocument } from '../model/userModel';
 import baseController from './baseController';
 
@@ -16,22 +17,16 @@ class UsersController extends baseController<UserDocument> {
       return;
     }
 
-    const { username, profilePicture } = req.body as {
-      username?: string;
-      profilePicture?: string;
-    };
+    const { username, profilePicture } = req.body as UserProfilePayload;
 
     try {
-      const updateData: {
-        username?: string;
-        profilePicture?: string;
-      } = {};
+      const updateData: UserProfilePayload = {};
 
-      if (typeof username === 'string') {
-        updateData.username = username;
+      if (username) {
+        updateData.username = username.trim();
       }
-      if (typeof profilePicture === 'string') {
-        updateData.profilePicture = profilePicture;
+      if (profilePicture) {
+        updateData.profilePicture = profilePicture.trim();
       }
 
       const updatedUser = await user.findByIdAndUpdate(

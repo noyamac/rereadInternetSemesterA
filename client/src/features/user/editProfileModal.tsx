@@ -1,5 +1,6 @@
 import React from 'react';
 import { Alert, Button, Form, Modal } from 'react-bootstrap';
+import './editProfileModal.css';
 
 export interface EditProfileFields {
   username: string;
@@ -39,7 +40,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
             type="text"
             value={fields.username}
             onChange={(event) => onFieldChange('username', event.target.value)}
-            placeholder="Enter your username"
+            placeholder="Enter your new username"
             required
           />
         </Form.Group>
@@ -63,7 +64,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
         variant="light"
         onClick={onClose}
         disabled={isSaving}
-        style={{ borderColor: '#87B6BC', color: '#4d7f86' }}
+        className="edit-profile-cancel-button"
       >
         Cancel
       </Button>
@@ -71,11 +72,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
         variant="light"
         onClick={onSave}
         disabled={isSaving}
-        style={{
-          backgroundColor: '#87B6BC',
-          borderColor: '#87B6BC',
-          color: '#ffffff',
-        }}
+        className="edit-profile-save-button"
       >
         {isSaving ? 'Saving...' : 'Save Changes'}
       </Button>
