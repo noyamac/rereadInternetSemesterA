@@ -8,13 +8,13 @@ const PORT = process.env.PORT || 8080;
 
 initApp()
   .then((app: Express) => {
-    if (process.env.ENV === 'development') {
+    if (process.env.NODE_ENV === 'development') {
       http
         .createServer(app)
         .listen(PORT, () =>
           console.log(`Server is running on http://${process.env.DOMAIN_BASE || 'localhost'}:${PORT}`),
         );
-    } else if (process.env.ENV === 'production') {
+    } else if (process.env.NODE_ENV === 'production') {
       const options = {
         key: fs.readFileSync('../key.pem'),
         cert: fs.readFileSync('../cert.pem'),
