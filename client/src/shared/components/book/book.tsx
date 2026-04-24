@@ -104,7 +104,6 @@ const Book: React.FC<BookProps> = ({
               By {book.author}
             </Card.Subtitle>
           </div>
-
           <Badge bg="light-green" className="flex-shrink-0 ms-2">
             ${book.price}
           </Badge>
