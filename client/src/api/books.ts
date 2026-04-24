@@ -1,5 +1,5 @@
-import axios from 'axios';
 import type { InternalAxiosRequestConfig } from 'axios';
+import axios from 'axios';
 import type { BookCreatePayload, BookPost } from '../shared/types/book.model';
 import {
   getStoredAccessToken,
@@ -50,6 +50,16 @@ export const booksApi = {
       Pick<BookPost, 'title' | 'author' | 'price' | 'description' | 'summary'>
     >,
   ) => api.put(`/${bookId}`, fields).then((r) => parseBooks([r.data])[0]),
+
+  aiSearch: (searchInput: string) =>
+    api
+      .post('/ai-search', { params: { searchInput } })
+      .then((r) => parseBooks(r.data.data)),
+
+  regularSearch: (searchInput: string) =>
+    api
+      .post('/search', { params: { searchInput } })
+      .then((r) => parseBooks(r.data.data)),
 };
 
 const parseBooks = (data: ServerBook[]): BookPost[] => {

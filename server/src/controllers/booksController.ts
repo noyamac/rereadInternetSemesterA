@@ -1,6 +1,7 @@
 import { Response } from 'express';
 import mongoose from 'mongoose';
 import { book, BookDocument } from '../model/bookModel';
+import { AIService } from '../services/aiService';
 import { AuthRequest } from '../utils/types/auth';
 import baseController from './baseController';
 
@@ -136,6 +137,85 @@ class BooksController extends baseController<BookDocument> {
       res.json(populatedBook);
     } catch (err) {
       res.status(500).json({ error: 'Error liking book', err });
+    }
+  }
+
+  async regularSearch(req: AuthRequest, res: Response) {
+    try {
+      const { searchInput } = req.body.params;
+      if (
+        !searchInput ||
+        searchInput.trim().length < 3 ||
+        searchInput.length > 150
+      ) {
+        return res
+          .status(400)
+          .json({ message: 'Search query must be between 3 to 150 characters' });
+      }
+
+      const books = await this.model
+        .find({
+          $or: [
+            { title: { $regex: searchInput, $options: 'i' } },
+            { author: { $regex: searchInput, $options: 'i' } },
+            { description: { $regex: searchInput, $options: 'i' } },
+            { summary: { $regex: searchInput, $options: 'i' } },
+          ],
+        })
+        .populate('sellerId', 'username')
+        .limit(20);
+
+      res.status(200).json({
+        data: books,
+      });
+    } catch (error) {
+      console.error('Regular Search Controller Error:', error);
+      res.status(500).json({ message: 'Internal server error during search' });
+    }
+  }
+
+  async aiSearch(req: AuthRequest, res: Response) {
+    const aiService = new AIService();
+    try {
+      const { searchInput } = req.body.params;
+      if (
+        !searchInput ||
+        searchInput.trim().length < 3 ||
+        searchInput.length > 150
+      ) {
+        return res.status(400).json({ message: 'Search query must be between 3 to 150 characters' });
+      }
+
+      const expandedTerms = await aiService.generateResult(searchInput);
+      let books = await this.model
+        .find(
+          { $text: { $search: expandedTerms } },
+          { score: { $meta: 'textScore' } },
+        )
+        .populate('sellerId', 'username')
+        .sort({ score: { $meta: 'textScore' } })
+        .limit(20);
+
+      if (books.length === 0) {
+        books = await this.model
+          .find({
+            $or: [
+              { title: { $regex: searchInput, $options: 'i' } },
+              { author: { $regex: searchInput, $options: 'i' } },
+              { description: { $regex: searchInput, $options: 'i' } },
+              { summary: { $regex: searchInput, $options: 'i' } },
+            ],
+          })
+          .populate('sellerId', 'username')
+          .limit(20);
+      }
+
+      res.status(200).json({
+        data: books,
+      });
+    } catch (error) {
+      console.error('Search Controller Error:', error);
+      res.status(500).json({ message: 'Internal server error during search' });
     }
   }
 }

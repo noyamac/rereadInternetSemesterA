@@ -88,22 +88,23 @@ const Book: React.FC<BookProps> = ({
 
       <Card.Body className="d-flex flex-column">
         <div className="d-flex justify-content-between align-items-start mb-2 w-100">
-          <Card.Title
-            className="mb-0 d-flex flex-nowrap"
-            style={{ maxWidth: '75%', minWidth: 0 }}
-            title={`${book.title} | By ${book.author}`}
-          >
-            <span className="text-truncate" style={{ minWidth: 0 }}>
+          <div className="me-2" style={{ maxWidth: '75%', minWidth: 0 }}>
+            <Card.Title
+              className="mb-1 text-truncate"
+              style={{ minWidth: 0 }}
+              title={book.title}
+            >
               {book.title}
-            </span>
-            <span className="mx-1" style={{ flexShrink: 0 }}>
-              {' '}
-              | By{' '}
-            </span>
-            <span className="text-truncate" style={{ minWidth: 0 }}>
-              {book.author}
-            </span>
-          </Card.Title>
+            </Card.Title>
+            <Card.Subtitle
+              className="text-muted text-truncate"
+              style={{ minWidth: 0 }}
+              title={book.author}
+            >
+              By {book.author}
+            </Card.Subtitle>
+          </div>
+
           <Badge bg="light-green" className="flex-shrink-0 ms-2">
             ${book.price}
           </Badge>
