@@ -10,7 +10,7 @@ const bookSchema = new mongoose.Schema({
   title: { type: String, required: true },
   author: { type: String, required: true },
   price: { type: Number, required: true },
-  summary: { type: String },
+  summary: { type: String, required: true },
   comments: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: 'Comment',
@@ -23,6 +23,21 @@ const bookSchema = new mongoose.Schema({
   },
   date: { type: Date, required: true },
 });
+
+bookSchema.index(
+  {
+    title: 'text',
+    author: 'text',
+    summary: 'text',
+  },
+  {
+    weights: {
+      title: 10,
+      author: 5,
+      summary: 1,
+    },
+  },
+);
 
 export type BookDocument = mongoose.InferSchemaType<typeof bookSchema> &
   mongoose.Document;

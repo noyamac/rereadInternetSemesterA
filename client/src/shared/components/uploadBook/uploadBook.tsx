@@ -69,15 +69,15 @@ const UploadBook: React.FC = () => {
         uploadedImageUrl = uploadResponse.url;
       }
 
-      const payload: BookCreatePayload = {
-        title: formData.title.trim(),
-        author: formData.author.trim(),
-        price: Number(formData.price),
-        description: formData.description.trim(),
-        summary: formData.summary.trim() || undefined,
-        imageUrl: uploadedImageUrl,
-        date: new Date().toISOString(),
-      };
+    const payload: BookCreatePayload = {
+      title: formData.title.trim(),
+      author: formData.author.trim(),
+      price: Number(formData.price),
+      description: formData.description.trim(),
+      summary: formData.summary.trim(),
+      imageUrl: uploadedImageUrl,
+      date: new Date().toISOString(),
+    };
 
       await booksApi.createBook(payload);
       navigate('/');
@@ -181,7 +181,7 @@ const UploadBook: React.FC = () => {
                 </Row>
 
                 <Form.Group className="mb-4">
-                  <Form.Label className="fw-bold">Detailed Summary</Form.Label>
+                  <Form.Label className="fw-bold">Detailed Summary *</Form.Label>
                   <Form.Control
                     as="textarea"
                     name="summary"
@@ -189,6 +189,7 @@ const UploadBook: React.FC = () => {
                     placeholder="What is this book about?"
                     value={formData.summary}
                     onChange={handleChange}
+                    required
                   />
                 </Form.Group>
 
