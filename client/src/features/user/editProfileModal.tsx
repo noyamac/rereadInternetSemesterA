@@ -38,7 +38,13 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
     <Modal.Body>
       {errorMessage ? <Alert variant="danger">{errorMessage}</Alert> : null}
 
-      <Form>
+      <Form
+        id="edit-profile-form"
+        onSubmit={(event) => {
+          event.preventDefault();
+          onSave();
+        }}
+      >
         {previewProfilePicture || currentProfilePicture ? (
           <div className="text-center mb-3">
             <img
@@ -88,7 +94,8 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
       </Button>
       <Button
         variant="success"
-        onClick={onSave}
+        type="submit"
+        form="edit-profile-form"
         disabled={isSaving}
         className="edit-profile-save-button"
       >
