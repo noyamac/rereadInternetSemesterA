@@ -25,9 +25,10 @@ import {
   getStoredAccessToken,
   getUserIdFromToken,
 } from '../../shared/utils/authToken';
+import { getDefaultProfilePictureUrl } from '../../shared/utils/profilePicture';
 import './userProfile.css';
 
-const DEFAULT_PROFILE_PICTURE = '/public/photos/default-profile-picture.jpg';
+const DEFAULT_PROFILE_PICTURE = getDefaultProfilePictureUrl();
 
 const Profile: React.FC = () => {
   const navigate = useNavigate();
@@ -275,6 +276,14 @@ const Profile: React.FC = () => {
       });
 
       setUser(updatedUser);
+      setUserBooks((prevBooks) =>
+        prevBooks.map((book) => ({
+          ...book,
+          sellerUsername: updatedUser.username,
+          sellerProfilePicture:
+            updatedUser.profilePicture || DEFAULT_PROFILE_PICTURE,
+        })),
+      );
       setProfileFields({
         username: updatedUser.username,
       });

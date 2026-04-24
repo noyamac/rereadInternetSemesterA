@@ -17,7 +17,7 @@ class BooksController extends baseController<BookDocument> {
     try {
       const data = await this.model
         .find()
-        .populate('sellerId', 'username')
+        .populate('sellerId', 'username profilePicture')
         .skip(skip)
         .limit(limit);
       res.json(data);
@@ -50,7 +50,7 @@ class BooksController extends baseController<BookDocument> {
     try {
       const updatedBook = await book
         .findByIdAndUpdate(req.params.id, req.body, { new: true })
-        .populate('sellerId', 'username');
+        .populate('sellerId', 'username profilePicture');
 
       if (!updatedBook) {
         res.status(404).json({ error: 'Book not found' });
@@ -89,7 +89,7 @@ class BooksController extends baseController<BookDocument> {
       );
       const userBooks = await book
         .find({ sellerId: userIdMongo })
-        .populate('sellerId', 'username');
+        .populate('sellerId', 'username profilePicture');
       res.json(userBooks);
     } catch (error) {
       res.status(500).json({
@@ -129,7 +129,10 @@ class BooksController extends baseController<BookDocument> {
       }
 
       await currBook.save();
-      const populatedBook = await currBook.populate('sellerId', 'username');
+      const populatedBook = await currBook.populate(
+        'sellerId',
+        'username profilePicture',
+      );
       res.json(populatedBook);
     } catch (err) {
       res.status(500).json({ error: 'Error liking book', err });
