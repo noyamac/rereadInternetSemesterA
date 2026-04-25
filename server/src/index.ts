@@ -1,5 +1,8 @@
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
+
+dotenv.config();
+
 import express, { Express } from 'express';
 import mongoose from 'mongoose';
 import swaggerUi from 'swagger-ui-express';
@@ -9,8 +12,6 @@ import { bookRouter } from './routes/booksRouter';
 import { commentRouter } from './routes/commentRouter';
 import fileRouter from './routes/fileRouter';
 import userRouter from './routes/userRouter';
-
-dotenv.config();
 
 const app = express();
 

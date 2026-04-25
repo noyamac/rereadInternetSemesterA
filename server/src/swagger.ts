@@ -1,4 +1,5 @@
 import swaggerJsdoc from 'swagger-jsdoc';
+import { getServerBaseUrl } from './utils/serverBaseUrl';
 
 const options = {
   definition: {
@@ -11,8 +12,8 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:8080',
-        description: 'Development server',
+        url: getServerBaseUrl(),
+        description: 'ReRead server',
       },
     ],
     components: {
