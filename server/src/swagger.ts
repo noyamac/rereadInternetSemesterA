@@ -106,6 +106,41 @@ const options = {
             },
           },
         },
+        Comment: {
+          type: 'object',
+          properties: {
+            _id: {
+              type: 'string',
+              description: 'Comment identifier',
+            },
+            userId: {
+              oneOf: [
+                { type: 'string' },
+                {
+                  type: 'object',
+                  properties: {
+                    _id: { type: 'string' },
+                    username: { type: 'string' },
+                  },
+                },
+              ],
+              description: 'User id or populated user object',
+            },
+            bookId: {
+              type: 'string',
+              description: 'Book identifier',
+            },
+            content: {
+              type: 'string',
+              description: 'Comment content',
+            },
+            date: {
+              type: 'string',
+              format: 'date-time',
+              description: 'Creation date',
+            },
+          },
+        },
         Error: {
           type: 'object',
           properties: {
@@ -136,6 +171,10 @@ const options = {
       {
         name: 'Books',
         description: 'Book management and search endpoints',
+      },
+      {
+        name: 'Comments',
+        description: 'Comment creation and moderation endpoints',
       },
     ],
   },

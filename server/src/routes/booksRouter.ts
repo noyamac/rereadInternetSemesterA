@@ -35,6 +35,8 @@ export const bookRouter = express.Router();
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Book'
+ *       401:
+ *         description: Unauthorized access
  *       500:
  *         description: Server error retrieving books
  *         content:
