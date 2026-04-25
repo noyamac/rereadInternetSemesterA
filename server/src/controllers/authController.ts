@@ -4,16 +4,11 @@ import jwt from 'jsonwebtoken';
 import { Tokens } from '../utils/types/tokens';
 import { user } from '../model/userModel';
 import { OAuth2Client } from 'google-auth-library';
+import { getServerBaseUrl } from '../utils/serverBaseUrl';
 
 const client = new OAuth2Client();
 
-const serverBaseUrl = (): string => {
-  const domain = process.env.DOMAIN_BASE || 'localhost';
-  const port = process.env.PORT || '8080';
-  return `http://${domain}:${port}`;
-};
-
-const DEFAULT_PROFILE_PICTURE = `${serverBaseUrl()}/public/photos/default-profile-picture.jpg`;
+const defaultProfilePicture = `${getServerBaseUrl()}/public/photos/default-profile-picture.jpg`;
 
 const generateToken = (userId: string): Tokens => {
   const secret: string = process.env.JWT_SECRET || 'secretkey';
@@ -56,7 +51,7 @@ const register = async (req: Request, res: Response) => {
       username,
       email,
       password: encryptedPassword,
-      profilePicture: profilePicture || DEFAULT_PROFILE_PICTURE,
+      profilePicture: profilePicture || defaultProfilePicture,
     });
 
     const tokens: Tokens = generateToken(newUser._id.toString());
@@ -197,7 +192,7 @@ const googleLogin = async (req: Request, res: Response) => {
         username: payload?.name || 'Google User',
         email,
         password: ' ',
-        profilePicture: payload?.picture || DEFAULT_PROFILE_PICTURE,
+        profilePicture: payload?.picture || defaultProfilePicture,
       });
     }
     const tokens: Tokens = generateToken(currUser._id.toString());

@@ -13,7 +13,7 @@ interface BookProps {
   isRemoving?: boolean;
 }
 
-const DEFAULT_PROFILE_PICTURE = getDefaultProfilePictureUrl();
+const defaultProfilePicture = getDefaultProfilePictureUrl();
 
 const Book: React.FC<BookProps> = ({
   book,
@@ -30,14 +30,14 @@ const Book: React.FC<BookProps> = ({
       <Card.Header className="d-flex justify-content-between align-items-center">
         <div className="book-seller">
           <img
-            src={book.sellerProfilePicture || DEFAULT_PROFILE_PICTURE}
+            src={book.sellerProfilePicture || defaultProfilePicture}
             alt={book.sellerUsername || 'Seller'}
             className="book-seller-avatar"
             onError={(event) => {
               const image = event.currentTarget;
-              if (!image.src.includes(DEFAULT_PROFILE_PICTURE)) {
+              if (!image.src.includes(defaultProfilePicture)) {
                 image.onerror = null;
-                image.src = DEFAULT_PROFILE_PICTURE;
+                image.src = defaultProfilePicture;
               }
             }}
           />

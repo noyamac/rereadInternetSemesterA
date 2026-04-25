@@ -1,10 +1,5 @@
 import mongoose from 'mongoose';
-
-const serverBaseUrl = (): string => {
-  const domain = process.env.DOMAIN_BASE || 'localhost';
-  const port = process.env.PORT || '8080';
-  return `http://${domain}:${port}`;
-};
+import { getServerBaseUrl } from '../utils/serverBaseUrl';
 
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
@@ -13,7 +8,7 @@ const userSchema = new mongoose.Schema({
   profilePicture: {
     type: String,
     default: () =>
-      `${serverBaseUrl()}/public/photos/default-profile-picture.jpg`,
+      `${getServerBaseUrl()}/public/photos/default-profile-picture.jpg`,
   },
   tokens: { type: [String] },
 });
