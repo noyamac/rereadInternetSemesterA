@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+  Alert,
   Badge,
   Button,
   Card,
@@ -10,17 +11,24 @@ import {
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { booksApi } from '../../api/books';
+import { fileApi } from '../../api/file';
 import { userApi } from '../../api/user';
 import { useAuth } from '../../hooks/useAuth';
 import type { BookPost } from '../../shared/types/book.model';
+import type { EditBookFields } from '../../shared/types/book.model';
 import type { UserProfile } from '../../shared/types/user.model';
 import ConfirmDeleteModal from './confirmDeleteModal';
-import EditBookModal, { type EditBookFields } from './editBookModal';
+import EditBookModal from './editBookModal';
+import EditProfileModal, { type EditProfileFields } from './editProfileModal';
 import MyListingsSection from './myListingsSection';
 import {
   getStoredAccessToken,
   getUserIdFromToken,
 } from '../../shared/utils/authToken';
+import { getDefaultProfilePictureUrl } from '../../shared/utils/profilePicture';
+import './userProfile.css';
+
+const DEFAULT_PROFILE_PICTURE = getDefaultProfilePictureUrl();
 
 const Profile: React.FC = () => {
   const navigate = useNavigate();
@@ -39,8 +47,27 @@ const Profile: React.FC = () => {
     summary: '',
   });
   const [isSaving, setIsSaving] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [profileError, setProfileError] = useState('');
+  const [profileSuccess, setProfileSuccess] = useState('');
+  const [profileFields, setProfileFields] = useState<EditProfileFields>({
+    username: '',
+  });
+  const [profilePictureFile, setProfilePictureFile] = useState<File | null>(
+    null,
+  );
+  const [profilePicturePreview, setProfilePicturePreview] = useState('');
   const [loadError, setLoadError] = useState('');
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      if (profilePicturePreview) {
+        URL.revokeObjectURL(profilePicturePreview);
+      }
+    };
+  }, [profilePicturePreview]);
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -69,6 +96,9 @@ const Profile: React.FC = () => {
         ]);
 
         setUser(userData);
+        setProfileFields({
+          username: userData.username,
+        });
         setUserBooks(booksData);
       } catch (error) {
         console.error('Error fetching profile data:', error);
@@ -175,13 +205,102 @@ const Profile: React.FC = () => {
     }
   };
 
+  const openEditProfile = () => {
+    if (!user) return;
+
+    setProfileError('');
+    setProfileSuccess('');
+    setProfilePictureFile(null);
+    setProfilePicturePreview('');
+    setProfileFields({
+      username: user.username,
+    });
+    setIsEditingProfile(true);
+  };
+
+  const closeEditProfile = () => {
+    setIsEditingProfile(false);
+    if (profilePicturePreview) {
+      URL.revokeObjectURL(profilePicturePreview);
+    }
+    setProfilePicturePreview('');
+    setProfilePictureFile(null);
+  };
+
+  const handleProfilePictureChange = (file: File | null) => {
+    if (profilePicturePreview) {
+      URL.revokeObjectURL(profilePicturePreview);
+    }
+
+    if (!file) {
+      setProfilePictureFile(null);
+      setProfilePicturePreview('');
+      return;
+    }
+
+    setProfilePictureFile(file);
+    setProfilePicturePreview(URL.createObjectURL(file));
+  };
+
+  const handleProfileFieldChange = (
+    field: keyof EditProfileFields,
+    value: string,
+  ) => {
+    setProfileFields((currentFields) => ({ ...currentFields, [field]: value }));
+  };
+
+  const saveProfile = async () => {
+    if (!user) return;
+
+    const trimmedUsername = profileFields.username.trim();
+
+    if (!trimmedUsername) {
+      setProfileError('Username is required.');
+      return;
+    }
+
+    setProfileError('');
+    setProfileSuccess('');
+    setIsSavingProfile(true);
+
+    try {
+      let profilePictureUrl = user.profilePicture || DEFAULT_PROFILE_PICTURE;
+      if (profilePictureFile) {
+        const uploaded = await fileApi.uploadImage(profilePictureFile);
+        profilePictureUrl = uploaded.url;
+      }
+
+      const updatedUser = await userApi.updateUser(user._id, {
+        username: trimmedUsername,
+        profilePicture: profilePictureUrl || undefined,
+      });
+
+      setUser(updatedUser);
+      setUserBooks((prevBooks) =>
+        prevBooks.map((book) => ({
+          ...book,
+          sellerUsername: updatedUser.username,
+          sellerProfilePicture:
+            updatedUser.profilePicture || DEFAULT_PROFILE_PICTURE,
+        })),
+      );
+      setProfileFields({
+        username: updatedUser.username,
+      });
+      closeEditProfile();
+      setProfileSuccess('Profile updated successfully.');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      setProfileError('Failed to save profile changes.');
+    } finally {
+      setIsSavingProfile(false);
+    }
+  };
+
   if (isLoading) {
     return (
-      <Container
-        className="d-flex justify-content-center align-items-center"
-        style={{ minHeight: '60vh' }}
-      >
-        <Spinner animation="border" variant="purple" />
+      <Container className="profile-loader d-flex justify-content-center align-items-center">
+        <Spinner animation="border" className="profile-loader-spinner" />
       </Container>
     );
   }
@@ -199,25 +318,27 @@ const Profile: React.FC = () => {
   return (
     <Container className="py-5">
       <Card className="border-0 shadow-sm mb-5 rounded-4 overflow-hidden">
-        <div className="bg-purple" style={{ height: '120px' }}></div>
+        <div className="profile-header"></div>
         <Card.Body className="px-5 pb-5 position-relative">
           <img
-            src={user.profilePicture}
+            src={user.profilePicture || DEFAULT_PROFILE_PICTURE}
             alt={user.username}
-            className="rounded-circle border border-4 border-white shadow-sm mb-3"
-            style={{
-              width: '100px',
-              height: '100px',
-              marginTop: '-65px',
-              objectFit: 'cover',
-              backgroundColor: 'white',
+            className="rounded-circle border border-4 border-white shadow-sm mb-3 profile-picture"
+            onError={(event) => {
+              const image = event.currentTarget;
+              if (image.src.includes(DEFAULT_PROFILE_PICTURE)) {
+                image.onerror = null;
+                return;
+              }
+              image.onerror = null;
+              image.src = DEFAULT_PROFILE_PICTURE;
             }}
           />
           <Row>
             <Col md={8}>
               <h2 className="fw-bold mb-1">{user.username}</h2>
               <p className="text-muted mb-2">{user.email}</p>
-              <Badge bg="purple" className="px-3 py-2 rounded-pill text-white">
+              <Badge bg="light-green" className="px-3 py-2 rounded-pill">
                 {userBooks.length} Active Listings
               </Badge>
             </Col>
@@ -226,18 +347,17 @@ const Profile: React.FC = () => {
               className="d-flex flex-column align-items-center align-items-md-end mt-3 mt-md-0 gap-3"
             >
               <Button
-                variant="outline-primary"
-                className="rounded-pill px-4"
-                style={{ minWidth: '150px' }}
+                variant="light"
+                className="rounded-pill px-4 profile-edit-button"
+                onClick={openEditProfile}
               >
                 Edit Profile
               </Button>
               <Button
-                variant="outline-danger"
-                className="rounded-pill px-4"
+                variant="light"
+                className="rounded-pill px-4 profile-logout-button"
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                style={{ minWidth: '150px' }}
               >
                 {isLoggingOut ? 'Logging out...' : 'Logout'}
               </Button>
@@ -245,6 +365,17 @@ const Profile: React.FC = () => {
           </Row>
         </Card.Body>
       </Card>
+
+      {profileSuccess ? (
+        <Alert
+          variant="success"
+          className="rounded-4 border-0 shadow-sm mb-4"
+          onClose={() => setProfileSuccess('')}
+          dismissible
+        >
+          {profileSuccess}
+        </Alert>
+      ) : null}
 
       <ConfirmDeleteModal
         show={!!confirmingBookId}
@@ -254,6 +385,19 @@ const Profile: React.FC = () => {
         isProcessing={!!deletingBookId}
         onClose={() => setConfirmingBookId(null)}
         onConfirm={confirmRemove}
+      />
+
+      <EditProfileModal
+        show={isEditingProfile}
+        fields={profileFields}
+        currentProfilePicture={user.profilePicture || DEFAULT_PROFILE_PICTURE}
+        previewProfilePicture={profilePicturePreview}
+        isSaving={isSavingProfile}
+        errorMessage={profileError}
+        onClose={closeEditProfile}
+        onSave={saveProfile}
+        onFileChange={handleProfilePictureChange}
+        onFieldChange={handleProfileFieldChange}
       />
 
       <EditBookModal

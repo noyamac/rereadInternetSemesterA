@@ -3,6 +3,7 @@ import { Express } from 'express';
 import https from 'https';
 import http from 'http';
 import fs from 'fs';
+import { getServerBaseUrl } from './utils/serverBaseUrl';
 
 const PORT = process.env.PORT || 8080;
 
@@ -12,7 +13,7 @@ initApp()
       http
         .createServer(app)
         .listen(PORT, () =>
-          console.log(`Server is running on http://${process.env.DOMAIN_BASE || 'localhost'}:${PORT}`),
+          console.log(`Server is running on ${getServerBaseUrl()}`),
         );
     } else if (process.env.NODE_ENV === 'production') {
       const options = {
@@ -22,7 +23,7 @@ initApp()
       https
         .createServer(options, app)
         .listen(PORT, () =>
-          console.log(`Server is running on https://${process.env.DOMAIN_BASE || 'localhost'}:${PORT}`),
+          console.log(`Server is running on ${getServerBaseUrl()}`),
         );
     }
   })
