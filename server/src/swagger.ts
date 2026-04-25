@@ -141,6 +141,42 @@ const options = {
             },
           },
         },
+        User: {
+          type: 'object',
+          properties: {
+            _id: {
+              type: 'string',
+              description: 'User identifier',
+            },
+            username: {
+              type: 'string',
+              description: 'Username',
+            },
+            email: {
+              type: 'string',
+              format: 'email',
+              description: 'User email address',
+            },
+            profilePicture: {
+              type: 'string',
+              description: 'Profile picture URL',
+            },
+            tokens: {
+              type: 'array',
+              items: { type: 'string' },
+              description: 'Stored refresh tokens',
+            },
+          },
+        },
+        UploadResponse: {
+          type: 'object',
+          properties: {
+            url: {
+              type: 'string',
+              description: 'Public URL of the uploaded file',
+            },
+          },
+        },
         Error: {
           type: 'object',
           properties: {
@@ -175,6 +211,14 @@ const options = {
       {
         name: 'Comments',
         description: 'Comment creation and moderation endpoints',
+      },
+      {
+        name: 'Users',
+        description: 'User profile and account management endpoints',
+      },
+      {
+        name: 'Files',
+        description: 'File upload endpoints',
       },
     ],
   },
