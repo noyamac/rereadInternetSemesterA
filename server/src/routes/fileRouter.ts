@@ -1,6 +1,7 @@
 import express from 'express';
 const router = express.Router();
 import multer from 'multer';
+import { getServerBaseUrl } from '../utils/serverBaseUrl';
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -14,8 +15,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 const handleUpload = (req: express.Request, res: express.Response) => {
-  const base =
-    'http://' + process.env.DOMAIN_BASE + ':' + process.env.PORT + '/';
+  const base = `${getServerBaseUrl()}/`;
 
   const filePath = req.file?.path?.replace(/\\/g, '/');
   if (!filePath) {

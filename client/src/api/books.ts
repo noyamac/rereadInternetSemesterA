@@ -24,7 +24,9 @@ api.interceptors.request.use(attachAuthToken);
 
 type ServerBook = Omit<BookPost, 'likes' | 'isLiked' | 'sellerId'> & {
   likes?: string[];
-  sellerId: string | { _id: string; username?: string };
+  sellerId:
+    | string
+    | { _id: string; username?: string; profilePicture?: string };
 };
 
 export const booksApi = {
@@ -70,6 +72,10 @@ const parseBooks = (data: ServerBook[]): BookPost[] => {
       typeof book.sellerId === 'string'
         ? book.sellerUsername
         : book.sellerId.username,
+    sellerProfilePicture:
+      typeof book.sellerId === 'string'
+        ? book.sellerProfilePicture
+        : book.sellerId.profilePicture,
     sellerId:
       typeof book.sellerId === 'string' ? book.sellerId : book.sellerId._id,
     isLiked: currentUserId

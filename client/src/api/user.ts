@@ -1,5 +1,6 @@
 import axios, { type InternalAxiosRequestConfig } from 'axios';
 import { getStoredAccessToken } from '../shared/utils/authToken';
+import type { UserProfile } from '../shared/types/user.model';
 
 const api = axios.create({
   baseURL: '/user',
@@ -17,6 +18,14 @@ const attachAuthToken = (config: InternalAxiosRequestConfig) => {
 
 api.interceptors.request.use(attachAuthToken);
 
+export interface UpdateUserPayload {
+  username: string;
+  profilePicture?: string;
+}
+
 export const userApi = {
   getUser: (userId: string) => api.get(`/${userId}`).then((r) => r.data),
+
+  updateUser: (userId: string, payload: UpdateUserPayload) =>
+    api.put(`/${userId}`, payload).then((r) => r.data as UserProfile),
 };
