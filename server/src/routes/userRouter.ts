@@ -12,10 +12,4 @@ userRouter.put(
   usersController.update.bind(usersController),
 );
 
-userRouter.delete(
-  '/:id',
-  authMiddleware,
-  usersController.delete.bind(usersController),
-);
-
 export default userRouter;
