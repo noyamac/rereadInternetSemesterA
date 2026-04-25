@@ -1,20 +1,21 @@
 .bg-light-blue {
-  background-color: #00a8e8 !important;
+  background-color: var(--brand-blue, #304355) !important;
 }
 
 .btn-light-blue {
-  background-color: #00a8e8;
-  color: #ffffff;
-  border: none;
+  background-color: var(--brand-blue, #304355);
+  color: var(--text-inverse, #fdfdfd);
+  border-color: var(--brand-blue, #304355);
 }
 
 .btn-light-blue:hover {
-  background-color: #007ea7;
-  color: #ffffff;
+  background-color: var(--brand-blue-deep, #253544);
+  border-color: var(--brand-blue-deep, #253544);
+  color: var(--text-inverse, #fdfdfd);
 }
 
 .badge.bg-light-green {
-  background-color: #d4edda !important;
-  color: #155724;
-  border: 1px solid #c3e6cb;
+  background-color: var(--surface-sun, #fcfbb6) !important;
+  color: var(--text-main, #304355);
+  border: 1px solid #d7d7b7;
 }

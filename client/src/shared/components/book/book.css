@@ -25,6 +25,31 @@
   display: none !important;
 }
 
+.book-action-item {
+  font-weight: 500;
+  border-radius: 0.45rem;
+}
+
+.book-action-edit {
+  color: #304355;
+}
+
+.book-action-edit:hover,
+.book-action-edit:focus {
+  background-color: rgba(190, 217, 244, 0.45);
+  color: #304355;
+}
+
+.book-action-delete {
+  color: #b02a37;
+}
+
+.book-action-delete:hover,
+.book-action-delete:focus {
+  background-color: rgba(220, 53, 69, 0.12);
+  color: #8d1d2a;
+}
+
 .book-actions-toggle:hover,
 .book-actions-toggle:focus,
 .book-actions-toggle:active {
@@ -40,6 +65,22 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.book-seller {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.book-seller-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #d9e7ea;
+  flex-shrink: 0;
 }
 
 .text-truncate-multi {

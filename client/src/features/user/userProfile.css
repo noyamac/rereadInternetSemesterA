@@ -1,0 +1,35 @@
+.profile-loader {
+  min-height: 60vh;
+}
+
+.profile-loader-spinner {
+  color: #304355;
+}
+
+.profile-header {
+  height: 120px;
+  background: linear-gradient(120deg, #e8e8e2 0%, #fcfbb6 100%);
+  border-bottom: 1px solid rgba(48, 67, 85, 0.14);
+}
+
+.profile-picture {
+  width: 100px;
+  height: 100px;
+  margin-top: -65px;
+  object-fit: cover;
+  background-color: #ffffff;
+}
+
+.profile-edit-button {
+  min-width: 150px;
+  background-color: #304355 !important;
+  border-color: #304355 !important;
+  color: #fdfdfd !important;
+}
+
+.profile-logout-button {
+  min-width: 150px;
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+  color: #ffffff !important;
+}

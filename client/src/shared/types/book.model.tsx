@@ -15,6 +15,7 @@ export interface BookPost {
   imageUrl?: string;
   sellerId: string;
   sellerUsername?: string;
+  sellerProfilePicture?: string;
   description: string;
   summary: string;
   comments: BookComment[];

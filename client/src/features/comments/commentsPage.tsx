@@ -72,7 +72,7 @@ const CommentsPage: React.FC = () => {
         <Col md={10} lg={8}>
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h2 className="mb-0">Comments</h2>
-            <Link to="/" className="btn btn-outline-secondary btn-sm">
+            <Link to="/" className="btn btn-outline-light-blue btn-sm">
               Back to feed
             </Link>
           </div>
@@ -105,7 +105,7 @@ const CommentsPage: React.FC = () => {
 
           {isLoading ? (
             <div className="text-center py-4">
-              <Spinner animation="border" variant="primary" />
+              <Spinner animation="border" variant="light-blue" />
             </div>
           ) : comments.length === 0 ? (
             <Card className="border-2">

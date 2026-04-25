@@ -8,11 +8,14 @@ import {
   Row,
   Spinner,
 } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import { booksApi } from '../../api/books';
 import Book from '../../shared/components/book/book';
 import type { BookPost } from '../../shared/types/book.model';
+import './home.css';
 
 const Home: React.FC = () => {
+  const navigate = useNavigate();
   const [serachInput, setSearchInput] = useState<string>('');
   const [books, setBooks] = useState<BookPost[]>([]);
   const [page, setPage] = useState<number>(1);
@@ -111,9 +114,36 @@ const Home: React.FC = () => {
   return (
     <>
       <Container className="py-5">
+        <Row className="justify-content-center mb-4">
+          <Col md={11} lg={10}>
+            <section className="home-hero shadow-sm">
+              <div className="home-hero-content">
+                <h1 className="home-hero-title">Find your next favorite book</h1>
+                <p className="home-hero-subtitle">
+                  Browse affordable second-hand books from people near you, or
+                  list your own and give them a new shelf to live on.
+                </p>
+                <div className="home-hero-actions">
+                  <Button
+                    variant="light-blue"
+                    className="px-4"
+                    onClick={() => navigate('/upload')}
+                  >
+                    Sell a Book
+                  </Button>
+                </div>
+              </div>
+              <div className="home-hero-meta">
+                <span className="home-hero-meta-value">{books.length}</span>
+                <span className="home-hero-meta-label">books on this page</span>
+              </div>
+            </section>
+          </Col>
+        </Row>
+
         <Row className="justify-content-center mb-5">
           <Col md={8}>
-            <InputGroup size="lg">
+            <InputGroup size="lg" className="home-search-group">
               <Form.Control
                 type="text"
                 placeholder="Search by title, author, or keywords..."
@@ -121,14 +151,14 @@ const Home: React.FC = () => {
                 onChange={(e) => setSearchInput(e.target.value)}
               />
               <Button
-                variant="outline-primary"
+                variant="outline-light-blue"
                 onClick={handleRegularSearch}
                 disabled={regularLoading}
               >
                 {regularLoading ? <Spinner size="sm" /> : 'Search'}
               </Button>
               <Button
-                variant="outline-primary"
+                variant="outline-light-blue"
                 onClick={handleAiSearch}
                 disabled={aiLoading}
               >
@@ -136,7 +166,7 @@ const Home: React.FC = () => {
               </Button>
               {isSearchMode && (
                 <Button
-                  variant="outline-secondary"
+                  variant="outline-light-blue"
                   onClick={() => {
                     setSearchInput('');
                     setPage(1);
@@ -147,7 +177,7 @@ const Home: React.FC = () => {
                 </Button>
               )}
             </InputGroup>
-            <Form.Text className="text-muted ms-2">
+            <Form.Text className="text-muted ms-2 d-block mt-2">
               Search the database or use ✨ AI Search for smarter results.
             </Form.Text>
           </Col>
@@ -175,7 +205,11 @@ const Home: React.FC = () => {
         {hasMore && (
           <Row className="justify-content-center mt-4">
             <Col xs="auto">
-              <Button variant="primary" onClick={loadMore} disabled={loading}>
+              <Button
+                variant="light-blue"
+                onClick={loadMore}
+                disabled={loading}
+              >
                 {loading ? 'Loading...' : 'Load More'}
               </Button>
             </Col>

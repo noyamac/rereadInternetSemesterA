@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Badge, Button, Card, Dropdown, Modal } from 'react-bootstrap';
 import type { BookPost } from '../../types/book.model';
+import { getDefaultProfilePictureUrl } from '../../utils/profilePicture';
 import './book.css';
 
 interface BookProps {
@@ -11,6 +12,8 @@ interface BookProps {
   onEdit?: (book: BookPost) => void;
   isRemoving?: boolean;
 }
+
+const defaultProfilePicture = getDefaultProfilePictureUrl();
 
 const Book: React.FC<BookProps> = ({
   book,
@@ -25,7 +28,21 @@ const Book: React.FC<BookProps> = ({
   return (
     <Card className={`shadow-sm border-2 ${book.imageUrl ? 'h-100' : ''}`}>
       <Card.Header className="d-flex justify-content-between align-items-center">
-        <span>{book.sellerUsername || book.sellerId}</span>
+        <div className="book-seller">
+          <img
+            src={book.sellerProfilePicture || defaultProfilePicture}
+            alt={book.sellerUsername || 'Seller'}
+            className="book-seller-avatar"
+            onError={(event) => {
+              const image = event.currentTarget;
+              if (!image.src.includes(defaultProfilePicture)) {
+                image.onerror = null;
+                image.src = defaultProfilePicture;
+              }
+            }}
+          />
+          <span>{book.sellerUsername || book.sellerId}</span>
+        </div>
         {(onRemove || onEdit) && (
           <Dropdown align="end">
             <Dropdown.Toggle
@@ -40,18 +57,21 @@ const Book: React.FC<BookProps> = ({
             </Dropdown.Toggle>
             <Dropdown.Menu>
               {onEdit && (
-                <Dropdown.Item onClick={() => onEdit(book)}>
-                  ✏️ Edit
+                <Dropdown.Item
+                  className="book-action-item book-action-edit"
+                  onClick={() => onEdit(book)}
+                >
+                  Edit Post
                 </Dropdown.Item>
               )}
               {onEdit && onRemove && <Dropdown.Divider />}
               {onRemove && (
                 <Dropdown.Item
-                  className="text-danger"
+                  className="book-action-item book-action-delete"
                   onClick={() => onRemove(book._id)}
                   disabled={isRemoving}
                 >
-                  {isRemoving ? 'Removing...' : '🗑️ Delete'}
+                  {isRemoving ? 'Removing...' : 'Delete Post'}
                 </Dropdown.Item>
               )}
             </Dropdown.Menu>

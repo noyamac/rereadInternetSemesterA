@@ -11,6 +11,7 @@ import {
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { authApi } from '../../api/auth';
+import { fileApi } from '../../api/file';
 import { storeTokens } from '../../shared/utils/authToken';
 import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
 
@@ -36,6 +37,10 @@ const AuthPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [profilePictureFile, setProfilePictureFile] = useState<File | null>(
+    null,
+  );
+  const [profilePicturePreview, setProfilePicturePreview] = useState('');
 
   const isRegister = mode === 'register';
 
@@ -55,6 +60,19 @@ const AuthPage: React.FC = () => {
   const switchMode = () => {
     setMode((currentMode) => (currentMode === 'login' ? 'register' : 'login'));
     setErrorMessage('');
+    setProfilePictureFile(null);
+    setProfilePicturePreview('');
+  };
+
+  const handleProfilePictureChange = (file: File | null) => {
+    if (profilePicturePreview) URL.revokeObjectURL(profilePicturePreview);
+    if (!file) {
+      setProfilePictureFile(null);
+      setProfilePicturePreview('');
+      return;
+    }
+    setProfilePictureFile(file);
+    setProfilePicturePreview(URL.createObjectURL(file));
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -71,10 +89,16 @@ const AuthPage: React.FC = () => {
 
     try {
       if (isRegister) {
+        let profilePictureUrl: string | undefined;
+        if (profilePictureFile) {
+          const uploaded = await fileApi.uploadImage(profilePictureFile);
+          profilePictureUrl = uploaded.url;
+        }
         const response = await authApi.register({
           username: username.trim(),
           email: email.trim(),
           password,
+          profilePicture: profilePictureUrl,
         });
         storeTokens(response.tokens);
       } else {
@@ -145,17 +169,17 @@ const AuthPage: React.FC = () => {
       <style>{`
         .toggle-auth-button {
           background-color: #fff !important;
-          color: #0991a0 !important;
-          border: 1px solid #99c1c6 !important;
+          color: #304355 !important;
+          border: 1px solid #304355 !important;
           border-radius: 0.375rem !important;
           font-weight: 500;
           transition: background-color 0.2s, color 0.2s, border-color 0.2s;
           box-shadow: none !important;
         }
         .toggle-auth-button:hover:not(:disabled) {
-          background-color: #e6f3f4 !important;
-          color: #07707a !important;
-          border-color: #99c1c6 !important;
+          background-color: #bed9f4 !important;
+          color: #304355 !important;
+          border-color: #304355 !important;
         }
       `}</style>
       <Container className="py-5">
@@ -171,7 +195,7 @@ const AuthPage: React.FC = () => {
                 </p>
                 <h4
                   className="fw-bold mb-0"
-                  style={{ fontSize: '1.4rem', color: '#6f42c1' }}
+                  style={{ fontSize: '1.4rem', color: '#304355' }}
                 >
                   {isRegister ? 'Join our community!' : 'Welcome Back!'}
                 </h4>
@@ -186,7 +210,7 @@ const AuthPage: React.FC = () => {
 
                   {isRegister ? (
                     <Form.Group className="mb-3">
-                      <Form.Label className="fw-bold">Username</Form.Label>
+                      <Form.Label className="fw-bold">Username *</Form.Label>
                       <Form.Control
                         type="text"
                         value={username}
@@ -198,7 +222,7 @@ const AuthPage: React.FC = () => {
                   ) : null}
 
                   <Form.Group className="mb-3">
-                    <Form.Label className="fw-bold">Email</Form.Label>
+                    <Form.Label className="fw-bold">Email *</Form.Label>
                     <Form.Control
                       type="email"
                       value={email}
@@ -208,8 +232,8 @@ const AuthPage: React.FC = () => {
                     />
                   </Form.Group>
 
-                  <Form.Group className="mb-4">
-                    <Form.Label className="fw-bold">Password</Form.Label>
+                  <Form.Group className={isRegister ? 'mb-3' : 'mb-4'}>
+                    <Form.Label className="fw-bold">Password *</Form.Label>
                     <Form.Control
                       type="password"
                       value={password}
@@ -219,6 +243,36 @@ const AuthPage: React.FC = () => {
                       required
                     />
                   </Form.Group>
+
+                  {isRegister ? (
+                    <Form.Group className="mb-4">
+                      <Form.Label className="fw-bold">
+                        Profile Picture
+                      </Form.Label>
+                      {profilePicturePreview && (
+                        <div className="text-center mb-2">
+                          <img
+                            src={profilePicturePreview}
+                            alt="Preview"
+                            className="rounded-circle border"
+                            style={{
+                              width: '72px',
+                              height: '72px',
+                              objectFit: 'cover',
+                            }}
+                          />
+                        </div>
+                      )}
+                      <Form.Control
+                        type="file"
+                        accept="image/*"
+                        onChange={(event) => {
+                          const input = event.target as HTMLInputElement;
+                          handleProfilePictureChange(input.files?.[0] || null);
+                        }}
+                      />
+                    </Form.Group>
+                  ) : null}
 
                   <Button
                     variant="light-blue"

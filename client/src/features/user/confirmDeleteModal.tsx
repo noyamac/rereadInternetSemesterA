@@ -30,7 +30,7 @@ const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
       </Modal.Body>
       <Modal.Footer className="border-0">
         <Button
-          variant="outline-secondary"
+          variant="outline-light-blue"
           className="rounded-pill px-4"
           onClick={onClose}
           disabled={isProcessing}
