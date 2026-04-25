@@ -111,7 +111,7 @@ describe('Books API', () => {
       _id: userId,
       username: 'testuser',
       profilePicture:
-        'http://localhost:8081/public/photos/default-profile-picture.jpg',
+        'http://localhost:8080/public/photos/default-profile-picture.jpg',
     });
   });
 

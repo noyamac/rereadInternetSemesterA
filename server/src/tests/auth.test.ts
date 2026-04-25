@@ -37,7 +37,7 @@ describe('Auth API', () => {
   test('Register - duplicate email', async () => {
     const res = await request(app).post('/auth/register').send(userMock);
 
-    expect(res.statusCode).toBe(400);
+    expect(res.statusCode).toBe(409);
   });
 
   test('Login', async () => {
