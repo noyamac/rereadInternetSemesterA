@@ -3,12 +3,13 @@
 }
 
 .profile-loader-spinner {
-  color: #87b6bc;
+  color: #304355;
 }
 
 .profile-header {
   height: 120px;
-  background-color: #87b6bc;
+  background: linear-gradient(120deg, #e8e8e2 0%, #fcfbb6 100%);
+  border-bottom: 1px solid rgba(48, 67, 85, 0.14);
 }
 
 .profile-picture {
@@ -21,9 +22,9 @@
 
 .profile-edit-button {
   min-width: 150px;
-  background-color: #59ac77 !important;
-  border-color: #59ac77 !important;
-  color: #ffffff !important;
+  background-color: #304355 !important;
+  border-color: #304355 !important;
+  color: #fdfdfd !important;
 }
 
 .profile-logout-button {

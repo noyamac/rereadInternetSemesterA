@@ -23,7 +23,7 @@ function App() {
   if (isLoading) {
     return (
       <div className="d-flex justify-content-center pt-5">
-        <Spinner animation="border" variant="primary" />
+        <Spinner animation="border" variant="light-blue" />
       </div>
     );
   }
@@ -34,11 +34,11 @@ function App() {
     <Router>
       {isLoggedIn ? <NavigationBar /> : null}
 
-      <main className="bg-light min-vh-100">
+      <main className="app-shell">
         <Suspense
           fallback={
             <div className="d-flex justify-content-center pt-5">
-              <Spinner animation="border" variant="primary" />
+              <Spinner animation="border" variant="light-blue" />
             </div>
           }
         >

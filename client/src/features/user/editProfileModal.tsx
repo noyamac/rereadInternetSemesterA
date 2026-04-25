@@ -11,11 +11,13 @@ interface EditProfileModalProps {
   fields: EditProfileFields;
   currentProfilePicture?: string;
   previewProfilePicture?: string;
+  canRemovePicture: boolean;
   isSaving: boolean;
   errorMessage: string;
   onClose: () => void;
   onSave: () => void;
   onFileChange: (file: File | null) => void;
+  onRemovePicture: () => void;
   onFieldChange: (field: keyof EditProfileFields, value: string) => void;
 }
 
@@ -24,11 +26,13 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
   fields,
   currentProfilePicture,
   previewProfilePicture,
+  canRemovePicture,
   isSaving,
   errorMessage,
   onClose,
   onSave,
   onFileChange,
+  onRemovePicture,
   onFieldChange,
 }) => (
   <Modal show={show} onHide={onClose} centered>
@@ -77,7 +81,20 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({
               onFileChange(input.files?.[0] || null);
             }}
           />
-          <Form.Text className="text-muted">
+          {canRemovePicture &&
+          !(previewProfilePicture || currentProfilePicture || '').includes(
+            'default-profile-picture',
+          ) ? (
+            <Button
+              variant="outline-danger"
+              size="sm"
+              className="edit-profile-remove-picture-button"
+              onClick={onRemovePicture}
+            >
+              Remove current picture
+            </Button>
+          ) : null}
+          <Form.Text className="text-muted edit-profile-helper-text">
             Upload a new profile photo from your computer.
           </Form.Text>
         </Form.Group>
