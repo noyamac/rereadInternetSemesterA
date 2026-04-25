@@ -29,6 +29,14 @@ const isDuplicateEmailError = (details: unknown): boolean => {
   );
 };
 
+const isDuplicateUsernameError = (details: unknown): boolean => {
+  const detailsText = JSON.stringify(details || {});
+  return (
+    detailsText.includes('E11000') &&
+    (detailsText.includes('username_1') || detailsText.includes('username'))
+  );
+};
+
 const AuthPage: React.FC = () => {
   const navigate = useNavigate();
   const [mode, setMode] = useState<AuthMode>('login');
@@ -118,16 +126,30 @@ const AuthPage: React.FC = () => {
       }>;
       const backendErrorText = `${axiosError.response?.data?.error || ''} ${JSON.stringify(axiosError.response?.data?.details || {})}`;
 
-      if (
-        isRegister &&
-        (isDuplicateEmailError(axiosError.response?.data?.details) ||
+      if (isRegister) {
+        if (
+          axiosError.response?.data?.error === 'Username is already taken' ||
+          isDuplicateUsernameError(axiosError.response?.data?.details) ||
           (backendErrorText.includes('E11000') &&
-            backendErrorText.includes('email')))
-      ) {
-        setErrorMessage(
-          'This email is already taken. Please use another email.',
-        );
-        return;
+            backendErrorText.includes('username'))
+        ) {
+          setErrorMessage(
+            'This username is already taken. Please choose another username.',
+          );
+          return;
+        }
+
+        if (
+          axiosError.response?.data?.error === 'Email is already taken' ||
+          isDuplicateEmailError(axiosError.response?.data?.details) ||
+          (backendErrorText.includes('E11000') &&
+            backendErrorText.includes('email'))
+        ) {
+          setErrorMessage(
+            'This email is already taken. Please use another email.',
+          );
+          return;
+        }
       }
 
       setErrorMessage(
