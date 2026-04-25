@@ -10,6 +10,8 @@ export const commentRouter = express.Router();
  *   get:
  *     summary: Get all comments
  *     tags: [Comments]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: bookId
@@ -30,6 +32,8 @@ export const commentRouter = express.Router();
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Comment'
+ *       401:
+ *         description: Unauthorized access
  *       500:
  *         description: Server error fetching comments
  *         content:
@@ -37,7 +41,7 @@ export const commentRouter = express.Router();
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-commentRouter.get('/', commentsController.getAll.bind(commentsController));
+commentRouter.get('/', authMiddleware, commentsController.getAll.bind(commentsController));
 
 /**
  * @swagger
@@ -45,6 +49,8 @@ commentRouter.get('/', commentsController.getAll.bind(commentsController));
  *   get:
  *     summary: Get a comment by id
  *     tags: [Comments]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -59,6 +65,8 @@ commentRouter.get('/', commentsController.getAll.bind(commentsController));
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Comment'
+ *       401:
+ *         description: Unauthorized access
  *       404:
  *         description: Comment not found
  *       500:
@@ -68,7 +76,7 @@ commentRouter.get('/', commentsController.getAll.bind(commentsController));
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-commentRouter.get('/:id', commentsController.getById.bind(commentsController));
+commentRouter.get('/:id', authMiddleware, commentsController.getById.bind(commentsController));
 
 /**
  * @swagger
