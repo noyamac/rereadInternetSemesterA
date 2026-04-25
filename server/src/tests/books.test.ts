@@ -15,7 +15,9 @@ beforeAll(async () => {
   await book.deleteMany();
   await user.deleteMany();
 
-  const registerResponse = await request(app).post('/auth/register').send(userMock);
+  const registerResponse = await request(app)
+    .post('/auth/register')
+    .send(userMock);
   accessToken = registerResponse.body.tokens.token;
 
   const savedUser = await user.findOne({ email: userMock.email });
@@ -28,7 +30,9 @@ afterAll(async () => {
 
 describe('Books API', () => {
   test('Get all books - no books uploaded', async () => {
-    const res = await request(app).get('/book');
+    const res = await request(app)
+      .get('/book')
+      .set('Authorization', 'Bearer ' + accessToken);
 
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual([]);
@@ -62,7 +66,9 @@ describe('Books API', () => {
   });
 
   test('Get all books', async () => {
-    const res = await request(app).get('/book');
+    const res = await request(app)
+      .get('/book')
+      .set('Authorization', 'Bearer ' + accessToken);
 
     expect(res.statusCode).toBe(200);
     expect(res.body.length).toBe(1);
@@ -98,11 +104,14 @@ describe('Books API', () => {
     const res = await request(app)
       .get('/book/' + userId + '/userBooks')
       .set('Authorization', 'Bearer ' + accessToken);
+
     expect(res.statusCode).toBe(200);
     expect(res.body.length).toBeGreaterThanOrEqual(1);
     expect(res.body[0].sellerId).toEqual({
       _id: userId,
       username: 'testuser',
+      profilePicture:
+        'http://localhost:8081/public/photos/default-profile-picture.jpg',
     });
   });
 

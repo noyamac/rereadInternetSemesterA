@@ -37,7 +37,9 @@ afterAll(async () => {
 
 describe('Comments API', () => {
   test('Get all comments - no comments uploaded', async () => {
-    const res = await request(app).get('/comment');
+    const res = await request(app)
+      .get('/comment')
+      .set('Authorization', 'Bearer ' + accessToken);
 
     expect(res.statusCode).toBe(200);
     expect(res.body).toEqual([]);
@@ -92,14 +94,18 @@ describe('Comments API', () => {
   });
 
   test('Get all comments', async () => {
-    const res = await request(app).get('/comment');
+    const res = await request(app)
+      .get('/comment')
+      .set('Authorization', 'Bearer ' + accessToken);
 
     expect(res.statusCode).toBe(200);
     expect(res.body.length).toBe(1);
   });
 
   test('Get comments by bookId filter', async () => {
-    const res = await request(app).get('/comment?bookId=' + bookId);
+    const res = await request(app)
+      .get('/comment?bookId=' + bookId)
+      .set('Authorization', 'Bearer ' + accessToken);
 
     expect(res.statusCode).toBe(200);
     expect(res.body.length).toBeGreaterThanOrEqual(1);
@@ -113,7 +119,9 @@ describe('Comments API', () => {
       .send({ ...commentMock, bookId });
     const commentId = createRes.body._id;
 
-    const res = await request(app).get('/comment/' + commentId);
+    const res = await request(app)
+      .get('/comment/' + commentId)
+      .set('Authorization', 'Bearer ' + accessToken);
 
     expect(res.statusCode).toBe(200);
     expect(res.body._id).toBe(commentId);
@@ -122,7 +130,9 @@ describe('Comments API', () => {
   test('Get comment by ID - not found', async () => {
     const fakeId = new mongoose.Types.ObjectId();
 
-    const res = await request(app).get('/comment/' + fakeId);
+    const res = await request(app)
+      .get('/comment/' + fakeId)
+      .set('Authorization', 'Bearer ' + accessToken);
 
     expect(res.statusCode).toBe(404);
   });
@@ -178,7 +188,9 @@ describe('Comments API', () => {
 
     expect(res.statusCode).toBe(200);
 
-    const getRes = await request(app).get('/comment/' + commentId);
+    const getRes = await request(app)
+      .get('/comment/' + commentId)
+      .set('Authorization', 'Bearer ' + accessToken);
     expect(getRes.statusCode).toBe(404);
 
     const bookRes = await request(app)

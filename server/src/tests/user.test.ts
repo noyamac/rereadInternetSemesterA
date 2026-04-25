@@ -26,7 +26,9 @@ afterAll(async () => {
 
 describe('User API', () => {
   test('Get user by ID', async () => {
-    const res = await request(app).get('/user/' + userId);
+    const res = await request(app)
+      .get('/user/' + userId)
+      .set('Authorization', 'Bearer ' + accessToken);
 
     expect(res.statusCode).toBe(200);
     expect(res.body._id).toBe(userId);
@@ -35,12 +37,14 @@ describe('User API', () => {
     expect(res.body.password).not.toBe(userMock.password);
   });
 
-  test('Get user by ID - not found', async () => {
+  test('Get user by ID - forbidden (different user)', async () => {
     const fakeId = new mongoose.Types.ObjectId();
 
-    const res = await request(app).get('/user/' + fakeId);
+    const res = await request(app)
+      .get('/user/' + fakeId)
+      .set('Authorization', 'Bearer ' + accessToken);
 
-    expect(res.statusCode).toBe(404);
+    expect(res.statusCode).toBe(403);
   });
 
   test('Update user', async () => {
@@ -75,5 +79,4 @@ describe('User API', () => {
 
     expect(res.statusCode).toBe(403);
   });
-
 });
