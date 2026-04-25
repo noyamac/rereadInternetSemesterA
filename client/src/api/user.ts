@@ -1,5 +1,4 @@
-import axios from 'axios';
-import type { InternalAxiosRequestConfig } from 'axios';
+import axios, { type InternalAxiosRequestConfig } from 'axios';
 import { getStoredAccessToken } from '../shared/utils/authToken';
 import type { UserProfile } from '../shared/types/user.model';
 
