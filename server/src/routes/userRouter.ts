@@ -93,39 +93,4 @@ userRouter.put(
   usersController.update.bind(usersController),
 );
 
-/**
- * @swagger
- * /user/{id}:
- *   delete:
- *     summary: Delete a user account
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: User identifier
- *     responses:
- *       200:
- *         description: User deleted successfully
- *       403:
- *         description: Forbidden - cannot delete another user
- *       404:
- *         description: User not found
- *       500:
- *         description: Server error deleting user
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- */
-userRouter.delete(
-  '/:id',
-  authMiddleware,
-  usersController.delete.bind(usersController),
-);
-
 export default userRouter;
