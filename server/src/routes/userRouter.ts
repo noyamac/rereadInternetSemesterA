@@ -65,11 +65,6 @@ userRouter.get('/:id', authMiddleware, usersController.getById.bind(usersControl
  *             properties:
  *               username:
  *                 type: string
- *               email:
- *                 type: string
- *                 format: email
- *               password:
- *                 type: string
  *               profilePicture:
  *                 type: string
  *     responses:
