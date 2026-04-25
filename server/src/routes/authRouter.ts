@@ -47,6 +47,12 @@ export const authRouter = express.Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
+ *       409:
+ *         description: Conflict - username or email is already taken
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 authRouter.post('/register', authController.register);
 

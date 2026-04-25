@@ -44,12 +44,22 @@ const register = async (req: Request, res: Response) => {
   }
 
   try {
+    const existingUsername = await user.findOne({ username: username.trim() });
+    if (existingUsername) {
+      return res.status(409).json({ error: 'Username is already taken' });
+    }
+
+    const existingEmail = await user.findOne({ email: email.trim() });
+    if (existingEmail) {
+      return res.status(409).json({ error: 'Email is already taken' });
+    }
+
     const salt = await bcrypt.genSalt(10);
     const encryptedPassword = await bcrypt.hash(password, salt);
 
     const newUser = await user.create({
-      username,
-      email,
+      username: username.trim(),
+      email: email.trim(),
       password: encryptedPassword,
       profilePicture: profilePicture || defaultProfilePicture,
     });
