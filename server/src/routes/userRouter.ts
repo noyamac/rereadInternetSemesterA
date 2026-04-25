@@ -10,6 +10,8 @@ export const userRouter = express.Router();
  *   get:
  *     summary: Get user details by id
  *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -24,8 +26,12 @@ export const userRouter = express.Router();
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Unauthorized access
  *       404:
  *         description: User not found
+ *       403:
+ *         description: Forbidden - cannot get another user's profile
  *       500:
  *         description: Server error fetching user
  *         content:
@@ -33,7 +39,7 @@ export const userRouter = express.Router();
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
-userRouter.get('/:id', usersController.getById.bind(usersController));
+userRouter.get('/:id', authMiddleware, usersController.getById.bind(usersController));
 
 /**
  * @swagger
@@ -73,6 +79,8 @@ userRouter.get('/:id', usersController.getById.bind(usersController));
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Unauthorized access
  *       403:
  *         description: Forbidden - cannot update another user
  *       404:

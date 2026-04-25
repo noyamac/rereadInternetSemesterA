@@ -8,6 +8,16 @@ class UsersController extends baseController<UserDocument> {
     super(user);
   }
 
+  async getById(req: AuthRequest, res: Response) {
+    const userId = req.user?._id;
+    const currUser = await user.findById(req.params.id);
+    if (currUser?._id.toString() !== userId) {
+      res.status(403).json({ error: 'Forbidden' });
+      return;
+    }
+    return super.getById(req, res);
+  }
+
   async update(req: AuthRequest, res: Response) {
     const userId = req.user?._id;
     const currUser = await user.findById(req.params.id);
