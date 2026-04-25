@@ -1,0 +1,93 @@
+.home-hero {
+  background: linear-gradient(
+    128deg,
+    rgba(252, 251, 182, 0.78) 0%,
+    rgba(253, 253, 253, 0.95) 42%,
+    rgba(190, 217, 244, 0.7) 100%
+  );
+  border: 1px solid rgba(48, 67, 85, 0.2);
+  border-radius: 1.2rem;
+  padding: 2.1rem;
+  display: flex;
+  gap: 1.25rem;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.home-hero-content {
+  max-width: 42rem;
+}
+
+.home-hero-badge {
+  font-size: 0.78rem;
+  border-radius: 999px;
+  margin-bottom: 0.9rem;
+}
+
+.home-hero-title {
+  font-size: clamp(1.8rem, 2.7vw, 2.35rem);
+  line-height: 1.18;
+  margin-bottom: 0.7rem;
+  color: #304355;
+}
+
+.home-hero-subtitle {
+  color: #304355;
+  font-size: 1.03rem;
+  margin-bottom: 1.05rem;
+}
+
+.home-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.home-hero-meta {
+  min-width: 140px;
+  background: rgba(253, 253, 253, 0.9);
+  border: 1px solid rgba(48, 67, 85, 0.24);
+  border-radius: 0.9rem;
+  padding: 0.9rem 1rem;
+  text-align: center;
+}
+
+.home-hero-meta-value {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #304355;
+  line-height: 1;
+}
+
+.home-hero-meta-label {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.8rem;
+  color: #304355;
+}
+
+.home-search-group .form-control {
+  border-top-left-radius: 0.9rem;
+  border-bottom-left-radius: 0.9rem;
+}
+
+.home-search-group .btn {
+  border-radius: 0;
+}
+
+.home-search-group .btn:last-child {
+  border-top-right-radius: 0.9rem;
+  border-bottom-right-radius: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .home-hero {
+    padding: 1.4rem;
+    flex-direction: column;
+  }
+
+  .home-hero-meta {
+    width: 100%;
+  }
+}

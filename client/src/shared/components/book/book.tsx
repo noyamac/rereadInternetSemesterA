@@ -57,18 +57,21 @@ const Book: React.FC<BookProps> = ({
             </Dropdown.Toggle>
             <Dropdown.Menu>
               {onEdit && (
-                <Dropdown.Item onClick={() => onEdit(book)}>
-                  ✏️ Edit
+                <Dropdown.Item
+                  className="book-action-item book-action-edit"
+                  onClick={() => onEdit(book)}
+                >
+                  Edit Post
                 </Dropdown.Item>
               )}
               {onEdit && onRemove && <Dropdown.Divider />}
               {onRemove && (
                 <Dropdown.Item
-                  className="text-danger"
+                  className="book-action-item book-action-delete"
                   onClick={() => onRemove(book._id)}
                   disabled={isRemoving}
                 >
-                  {isRemoving ? 'Removing...' : '🗑️ Delete'}
+                  {isRemoving ? 'Removing...' : 'Delete Post'}
                 </Dropdown.Item>
               )}
             </Dropdown.Menu>

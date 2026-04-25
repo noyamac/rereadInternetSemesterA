@@ -169,17 +169,17 @@ const AuthPage: React.FC = () => {
       <style>{`
         .toggle-auth-button {
           background-color: #fff !important;
-          color: #0991a0 !important;
-          border: 1px solid #99c1c6 !important;
+          color: #304355 !important;
+          border: 1px solid #304355 !important;
           border-radius: 0.375rem !important;
           font-weight: 500;
           transition: background-color 0.2s, color 0.2s, border-color 0.2s;
           box-shadow: none !important;
         }
         .toggle-auth-button:hover:not(:disabled) {
-          background-color: #e6f3f4 !important;
-          color: #07707a !important;
-          border-color: #99c1c6 !important;
+          background-color: #bed9f4 !important;
+          color: #304355 !important;
+          border-color: #304355 !important;
         }
       `}</style>
       <Container className="py-5">
@@ -195,7 +195,7 @@ const AuthPage: React.FC = () => {
                 </p>
                 <h4
                   className="fw-bold mb-0"
-                  style={{ fontSize: '1.4rem', color: '#6f42c1' }}
+                  style={{ fontSize: '1.4rem', color: '#304355' }}
                 >
                   {isRegister ? 'Join our community!' : 'Welcome Back!'}
                 </h4>

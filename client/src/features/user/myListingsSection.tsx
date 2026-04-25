@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, Col, Row } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import Book from '../../shared/components/book/book';
 import type { BookPost } from '../../shared/types/book.model';
 
@@ -18,6 +19,8 @@ const MyListingsSection: React.FC<MyListingsSectionProps> = ({
   onRemoveBook,
   onEditBook,
 }) => {
+  const navigate = useNavigate();
+
   return (
     <>
       <h4 className="fw-bold mb-4">My Listings</h4>
@@ -39,7 +42,11 @@ const MyListingsSection: React.FC<MyListingsSectionProps> = ({
       ) : (
         <div className="text-center p-5 bg-white rounded-4 shadow-sm text-muted">
           <h5>You haven't posted any books yet.</h5>
-          <Button variant="purple" className="mt-3 rounded-pill text-white">
+          <Button
+            variant="light-blue"
+            className="mt-3 rounded-pill text-white"
+            onClick={() => navigate('/upload')}
+          >
             Upload Your First Book
           </Button>
         </div>

@@ -47,7 +47,10 @@ export const booksApi = {
   updateBook: (
     bookId: string,
     fields: Partial<
-      Pick<BookPost, 'title' | 'author' | 'price' | 'description' | 'summary'>
+      Pick<
+        BookPost,
+        'title' | 'author' | 'price' | 'description' | 'summary' | 'imageUrl'
+      >
     >,
   ) => api.put(`/${bookId}`, fields).then((r) => parseBooks([r.data])[0]),
 
