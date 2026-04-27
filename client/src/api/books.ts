@@ -6,8 +6,11 @@ import {
   getUserIdFromStoredAccessToken,
 } from '../shared/utils/authToken';
 
+const BASE_URL =
+  import.meta.env.VITE_SERVER_BASE_URL || 'http://localhost:8080';
+
 const api = axios.create({
-  baseURL: '/book',
+  baseURL: `${BASE_URL}/book`,
   headers: { 'Content-Type': 'application/json' },
 });
 
