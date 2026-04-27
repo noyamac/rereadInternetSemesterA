@@ -5,6 +5,7 @@ dotenv.config();
 
 import express, { Express } from 'express';
 import mongoose from 'mongoose';
+import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import specs from './swagger';
 import { authRouter } from './routes/authRouter';
@@ -14,21 +15,21 @@ import fileRouter from './routes/fileRouter';
 import userRouter from './routes/userRouter';
 
 const app = express();
-
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use(
-  "/api-docs",
+  '/api-docs',
   swaggerUi.serve,
   swaggerUi.setup(specs, {
     explorer: true,
-    customCss: ".swagger-ui .topbar { display: none }",
-    customSiteTitle: "ReRead Website API Documentation",
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'ReRead Website API Documentation',
   }),
 );
-app.get("/api-docs.json", (req, res) => {
-  res.setHeader("Content-Type", "application/json");
+app.get('/api-docs.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
   res.send(specs);
 });
 

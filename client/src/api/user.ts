@@ -2,8 +2,11 @@ import axios, { type InternalAxiosRequestConfig } from 'axios';
 import { getStoredAccessToken } from '../shared/utils/authToken';
 import type { UserProfile } from '../shared/types/user.model';
 
+const BASE_URL =
+  import.meta.env.VITE_SERVER_BASE_URL || 'http://localhost:8080';
+
 const api = axios.create({
-  baseURL: '/user',
+  baseURL: `${BASE_URL}/user`,
   headers: { 'Content-Type': 'application/json' },
 });
 
