@@ -13,7 +13,7 @@ initApp()
       http
         .createServer(app)
         .listen(PORT, () =>
-          console.log(`Server is running on ${getServerBaseUrl()}`),
+          console.log(`DevelopmentServer is running on ${getServerBaseUrl()}`),
         );
     } else if (process.env.NODE_ENV === 'production') {
       const options = {
@@ -23,7 +23,7 @@ initApp()
       https
         .createServer(options, app)
         .listen(PORT, () =>
-          console.log(`Server is running on ${getServerBaseUrl()}`),
+          console.log(`Production Server is running on ${getServerBaseUrl()}`),
         );
     }
   })
