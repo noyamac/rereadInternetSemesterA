@@ -6,12 +6,15 @@ import type {
   RegisterPayload,
 } from '../shared/types/auth.model';
 
+const BASE_URL =
+  import.meta.env.VITE_SERVER_BASE_URL || 'http://localhost:8080';
+
 const api = axios.create({
-  baseURL: '/auth',
+  baseURL: `${BASE_URL}/auth`,
   headers: { 'Content-Type': 'application/json' },
 });
 
-export const authApi = { 
+export const authApi = {
   login: (formData: LoginPayload) =>
     api
       .post('/login', formData)
@@ -32,8 +35,8 @@ export const authApi = {
       headers: { Authorization: `Bearer ${refreshToken}` },
     }),
 
-    googleLogin: (credential: string) =>
-      api
-        .post('/google-login', { credential })
-        .then((response) => response.data as AuthResponse),
+  googleLogin: (credential: string) =>
+    api
+      .post('/google-login', { credential })
+      .then((response) => response.data as AuthResponse),
 };
