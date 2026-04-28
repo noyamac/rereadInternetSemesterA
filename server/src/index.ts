@@ -42,9 +42,9 @@ app.use('/public/client', express.static('public/client'));
 app.use('/file', fileRouter);
 app.use('/user', userRouter);
 
-app.use(express.static(path.join(__dirname, '../public/client')));
+app.use(express.static(path.join(__dirname, '../../public/client')));
 app.get('/{*path}', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/client', 'index.html'));
+  res.sendFile(path.join(__dirname, '../../public/client', 'index.html'));
 });
 
 export const initApp = (): Promise<Express> => {
