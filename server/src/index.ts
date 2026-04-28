@@ -13,6 +13,7 @@ import { bookRouter } from './routes/booksRouter';
 import { commentRouter } from './routes/commentRouter';
 import fileRouter from './routes/fileRouter';
 import userRouter from './routes/userRouter';
+import path from 'path';
 
 const app = express();
 app.use(cors());
@@ -37,8 +38,14 @@ app.use('/book', bookRouter);
 app.use('/comment', commentRouter);
 app.use('/auth', authRouter);
 app.use('/public/photos', express.static('public/photos'));
+app.use('/public/client', express.static('public/client'));
 app.use('/file', fileRouter);
 app.use('/user', userRouter);
+
+app.use(express.static(path.join(__dirname, '../public/client')));
+app.get('/{*path}', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/client', 'index.html'));
+});
 
 export const initApp = (): Promise<Express> => {
   const promise = new Promise<Express>((resolve, reject) => {
