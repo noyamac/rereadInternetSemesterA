@@ -123,6 +123,7 @@ const EditBookModal: React.FC<EditBookModalProps> = ({
             <Form.Control
               type="number"
               min={0}
+              step="0.01"
               value={fields.price}
               onChange={(event) =>
                 onFieldChange(
